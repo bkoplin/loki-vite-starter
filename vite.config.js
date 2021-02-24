@@ -1,10 +1,9 @@
 // @ts-check
 import vue from "@vitejs/plugin-vue";
+import { resolve } from "path";
 import { defineConfig } from "vite";
 
 import { fixLokiRefs } from "./fixLokiRefs";
-
-const { resolve } = require("path");
 
 /**
  * @type {import('vite').UserConfig}
@@ -12,7 +11,7 @@ const { resolve } = require("path");
 const viteConfig = {
   root: "./",
   plugins:
-        process.env.APP_ENV === "development"
+        process.env.NODE_ENV === "development"
           ? [vue()]
           : [fixLokiRefs(), vue()],
   build: {

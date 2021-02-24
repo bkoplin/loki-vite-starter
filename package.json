@@ -12,9 +12,9 @@
     }
   },
   "scripts": {
-    "dev": "APP_ENV=development vite",
+    "dev": "vite --mode dev",
     "build": "vite build",
-    "serve": "APP_ENV=development vite preview",
+    "serve": "vite preview --mode dev",
     "test:unit": "jest --config=jest.unit.config.js",
     "loki": "node uploadToLoki.js"
   },
@@ -23,6 +23,8 @@
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "gray-matter": "^4.0.2",
+    "primeicons": "^4.1.0",
+    "primevue": "^3.3.0",
     "vite": "^2.0.0",
     "vue": "^3.0.5",
     "vue-router": "^3.5.1",
