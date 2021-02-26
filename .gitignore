@@ -111,3 +111,4 @@ dist-ssr
 *.local
 .env
 .vscode/launch.json
+.env.dev
