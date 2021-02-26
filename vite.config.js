@@ -1,3 +1,4 @@
+import url from "@rollup/plugin-url";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 
@@ -43,16 +44,6 @@ const baseConfig = {
     ],
     extensions: [".mjs", ".js", ".jsx", ".json", ".sass", ".scss"],
   },
-  server: {
-    https: false,
-    cors: true,
-    proxy: {
-      '/query': {
-        changeOrigin: true,
-        target: "https://reedsmith.saplingdata.com/cobra/api/urn/com/loki/core/model/api/query/v/",
-      },
-    },
-  },
   build: buildOptions,
 };
 
@@ -64,6 +55,19 @@ export default ({ command, mode }) => {
       // serve specific config
       ...baseConfig,
       ...{ plugins: [vue()] },
+      server: {
+        https: false,
+        cors: true,
+        proxy: {
+          "/query": {
+            changeOrigin: true,
+            target: "https://reedsmith.saplingdata.com/cobra/api/urn/com/loki/core/model/api/query/v/",
+            // eslint-disable-next-line spaced-comment
+            //*! HOW DO I USE AUTH?
+            // auth: 
+          },
+        },
+      },
     };
   }
   // buildOptions = {
@@ -75,17 +79,31 @@ export default ({ command, mode }) => {
   //     },
   //   },
   // };
-  buildOptions.rollupOptions.output = {
-      entryFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash][name].js`,
-    chunkFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name].js`,
-    assetFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name].js`,
-  };
-  baseConfig.build = buildOptions;
+  // buildOptions.rollupOptions.output = {
+  //   entryFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name].js`,
+  //   chunkFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name].js`,
+  //   assetFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name][extname]`,
+  // };
+  // baseConfig.build = buildOptions;
   return {
     // build specific config
     ...baseConfig,
+    // assetsInclude: [".svg", ".woff", ".eot", ".ttf"],
     ...{
-      plugins: [fixLokiRefs(), vue()],
+      plugins: [
+        fixLokiRefs(),
+        // url({
+        //   fileName: `${packageJson.appInfo.loki.pageCodeName}![hash].[name][extname]`,
+        //   include: [
+        //     "**/*.ico",
+        //     "**/*.svg",
+        //     "**/*.woff",
+        //     "**/*.eot",
+        //     "**/*.ttf",
+        //   ],
+        // }),
+        vue(),
+      ],
     },
   };
 };

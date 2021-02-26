@@ -1,10 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node12/tsconfig.json",
+  "include": ["src/**.*"],
   "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
     "allowJs": true,
     "resolveJsonModule": true,
     "module": "ESNEXT",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   }
 }

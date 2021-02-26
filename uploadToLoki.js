@@ -68,8 +68,8 @@ const pushToLoki = async () => {
     const filePath = `./dist/${file}`;
 
     fs.readFile(filePath, "utf8", (err, data) => {
-      const baseFileName = file;
-      // const baseFileName = file.replace(`${loki.pageCodeName}!`, '');
+      // const baseFileName = file;
+      const baseFileName = file.replace(`${loki.pageCodeName}!`, '');
       const uploadUrl = pageFileUploadUrl + baseFileName;
       lokiSession
         .post(uploadUrl, data, {

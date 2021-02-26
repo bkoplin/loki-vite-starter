@@ -23,6 +23,7 @@ const tailwindCheck = () => {
 </script>
 
 <style>
+@import url("./main.css");
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
