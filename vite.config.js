@@ -22,6 +22,13 @@ const baseConfig = {
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
+  server: {
+    https: false,
+    cors: true,
+    proxy: {
+      '/query': {
+        changeOrigin: true,
+        target: "https://reedsmith.saplingdata.com/cobra/api/urn/com/loki/core/model/api/query/v/",
       },
     },
     outDir: "dist",
