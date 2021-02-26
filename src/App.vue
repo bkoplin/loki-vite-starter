@@ -1,11 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 mb-20">
-      <img class="my-auto max-h-60 max-w-60" alt="Sapling logo" src="http://saplingdata.com/api/urn/com/loki/core/model/api/modelResource/v/urn/com/saplingdata/website/app/resources/res0/img/sapling-footer-logo.svg?r=33">
-      <img class="my-auto max-h-60 max-w-60" alt="Vue logo" src="https://upload.wikimedia.org/wikipedia/commons/9/95/Vue.js_Logo_2.svg">
-    </div>
+    <LokiDataTable />
     <HelloWorld msg="Welcome to your Loki Vue 3 + Vite Starter!" />
-    <DataTable />
     <button class="inline-flex items-center px-2.5 py-1.5 mt-3 border
       border-transparent text-xs font-medium rounded shadow-sm text-white
       bg-indigo-600 hover:bg-indigo-700
@@ -17,7 +13,7 @@
 <script setup>
 // eslint-disable-next-line no-unused-vars
 import HelloWorld from './components/HelloWorld.vue';
-import DataTable from './components/DataTable.vue';
+import LokiDataTable from './components/LokiDataTable.vue';
 
 // eslint-disable-next-line no-unused-vars
 const tailwindCheck = () => {
