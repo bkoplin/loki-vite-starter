@@ -1,19 +1,23 @@
 // @ts-check
 import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
-import { defineConfig } from "vite";
 
 import { fixLokiRefs } from "./fixLokiRefs";
+import packageJson from "./package.json";
 
+// @ts-check
 /**
  * @type {import('vite').UserConfig}
  */
-const viteConfig = {
+const baseConfig = {
   root: "./",
-  plugins:
-        process.env.NODE_ENV === "development"
-          ? [vue()]
-          : [fixLokiRefs(), vue()],
+  base: `/urn/com/${packageJson.appInfo.loki.cloudCodeName}/${packageJson.appInfo.loki.appCodeName}/app/pages/${packageJson.appInfo.loki.pageCodeName}/`,
+  resolve: {
+    alias: {
+      nm: "./node_modules",
+      "@": "./src/components",
+    },
+  },
   build: {
     rollupOptions: {
       input: {
@@ -24,4 +28,25 @@ const viteConfig = {
     assetsDir: "./",
   },
 };
-export default defineConfig(viteConfig);
+export default ({ command, mode }) => {
+  if (command === "serve" || mode === "development") {
+    baseConfig.base = '/';
+    return {
+      // serve specific config
+      ...baseConfig,
+      ...{ plugins: [vue()] },
+    };
+  }
+  // baseConfig.build.rollupOptions.output = {
+  //   entryFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash][name].js`,
+  //   chunkFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash][name].js`,
+  //   assetFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash][name].js`,
+  // };
+  return {
+    // build specific config
+    ...baseConfig,
+    ...{
+      plugins: [fixLokiRefs(), vue()],
+    },
+  };
+};
