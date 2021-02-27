@@ -23,17 +23,20 @@ function fixLokiRefs() {
   const def = {
     name: "html-transform",
     enforce: "post",
+    apply: "build",
     transformIndexHtml(html, ctx) {
       const bundleNames = Object.keys(ctx.bundle);
       bundleNames.push("favicon.ico");
       // eslint-disable-next-line no-use-before-define
-      const n = bundleNames.reduce((r, b) => renameResources(r, b), html);
-      /** @type {import('vite').HtmlTagDescriptor} */
-      const titleTag = {
-        tag: 'title',
+      const n = bundleNames
+        .reduce((r, b) => renameResources(r, b), html)
+        .replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n<#include "urn:com:reedsmith:delorean:app:pages:htmlHeadLokiOnly">');
+      /** @type {import('vite').HtmlTagDescriptor[]} */
+      const tags = [{
+        tag: "title",
         children: loki.pageName,
-      };
-      return { html: n, tags: [titleTag] };
+      }];
+      return { html: n, tags };
     },
   };
   return def;
