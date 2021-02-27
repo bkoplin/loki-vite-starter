@@ -12,10 +12,6 @@
 
 <script setup>
 // eslint-disable-next-line no-unused-vars
-import HelloWorld from './components/HelloWorld.vue';
-import LokiDataTable from './components/LokiDataTable.vue';
-
-// eslint-disable-next-line no-unused-vars
 const tailwindCheck = () => {
   // eslint-disable-next-line no-alert
   alert('Yay Tailwind!');
