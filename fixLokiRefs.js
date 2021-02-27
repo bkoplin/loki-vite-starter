@@ -28,9 +28,12 @@ function fixLokiRefs() {
       bundleNames.push("favicon.ico");
       // eslint-disable-next-line no-use-before-define
       const n = bundleNames.reduce((r, b) => renameResources(r, b), html);
-      // @ts-ignore
-      // eslint-disable-next-line no-use-before-define
-      return n;
+      /** @type {import('vite').HtmlTagDescriptor} */
+      const titleTag = {
+        tag: 'title',
+        children: loki.pageName,
+      };
+      return { html: n, tags: [titleTag] };
     },
   };
   return def;
