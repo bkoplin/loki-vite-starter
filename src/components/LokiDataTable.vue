@@ -16,7 +16,7 @@
 /* eslint-disable no-console */
 import axios from 'axios';
 import { zipObject, upperCase } from "lodash-es";
-import { reactive, inject } from 'vue';
+import { reactive, inject, onMounted } from 'vue';
 import { queryApiUrl, queryBaseUrn } from '../../urlsAndUrns';
 
 export default {
@@ -30,14 +30,15 @@ export default {
       columns: [],
       results: [],
     });
-    axios.get(queryUrl, {
-      params: { queryUrn: import.meta.env.DEV ? 'urn:com:reedsmith:cobra:data:insights:Q2EELQGJ:components:component1' : `${queryBaseUrn}#test` },
-    }).then((d) => {
+    onMounted(async () => {
+      const d = await axios.get(queryUrl, {
+        params: { queryUrn: import.meta.env.DEV ? 'urn:com:reedsmith:cobra:data:insights:Q2EELQGJ:components:component1' : `${queryBaseUrn}#test` },
+      });
       console.log(d);
       const { data: { columnNames, results } } = d;
       state.columns = columnNames.map((c) => ({ field: c, header: upperCase(c) }));
       state.results = results.map((r) => zipObject(columnNames, r));
-    });
+    })
 
     return state;
   },
