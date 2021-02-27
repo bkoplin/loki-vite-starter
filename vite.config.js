@@ -1,32 +1,59 @@
-import url from "@rollup/plugin-url";
+// @ts-check
+/* eslint-disable import/no-extraneous-dependencies, no-unused-vars, import/first */
+import dotEnv from "dotenv";
+
+const env = dotEnv.config({ path: "./.env" }).parsed;
 import vue from "@vitejs/plugin-vue";
 import path from "path";
+import ViteComponents from "vite-plugin-components";
+// import { injectHtml, minifyHtml } from "vite-plugin-html";
+import PurgeIcons from "vite-plugin-purge-icons";
 
 import { fixLokiRefs } from "./fixLokiRefs";
-import packageJson from "./package.json";
+// import packageJson from "./package.json";
 
-// @ts-check
-/* eslint-disable import/no-extraneous-dependencies */
 const projectRootDir = path.resolve(__dirname);
 
 const indexHTML = path.resolve(projectRootDir, "index.html");
 const srcDir = path.resolve(projectRootDir, "src");
-let buildOptions = {
+const entry = path.resolve(srcDir, "main.js");
+
+/**
+ * @type {import('vite').UserConfig['build']}
+ */
+const build = {
   rollupOptions: {
     input: {
       main: indexHTML,
     },
   },
+  lib: {
+    name: "VM",
+    entry,
+    formats: ["iife"],
+  },
+  manifest: true,
   outDir: "dist",
   assetsDir: "./",
 };
-// @ts-check
+const plugins = [
+  fixLokiRefs(),
+  vue(),
+  ViteComponents({
+    dirs: [
+      "src",
+      "node_modules/primevue",
+    ],
+  }),
+];
+
 /**
  * @type {import('vite').UserConfig}
  */
 const baseConfig = {
   root: "./",
-  base: './',
+  base: "./",
+  plugins,
   resolve: {
     alias: [
       {
@@ -43,68 +70,44 @@ const baseConfig = {
         replacement: path.resolve(srcDir, "components"),
       },
     ],
-    extensions: [".mjs", ".js", ".jsx", ".json", ".sass", ".scss"],
+    extensions: [
+      ".mjs",
+      ".js",
+      ".jsx",
+      ".json",
+      ".sass",
+      ".scss",
+    ],
   },
-  build: buildOptions,
+  build,
 };
 
 /** @type{import('vite').UserConfigFn} */
 export default ({ command, mode }) => {
   if (command === "serve" || mode === "development") {
     // baseConfig.base = "";
-    return {
-      // serve specific config
-      ...baseConfig,
-      ...{ plugins: [vue()] },
-      server: {
-        https: false,
-        cors: true,
-        proxy: {
-          "/query": {
-            changeOrigin: true,
-            target: "https://reedsmith.saplingdata.com/cobra/api/urn/com/loki/core/model/api/query/v/",
-            // eslint-disable-next-line spaced-comment
-            //*! HOW DO I USE AUTH?
-            // auth: 
-          },
+    baseConfig.server = {
+      https: false,
+      cors: true,
+      proxy: {
+        "^.*/query/.*": {
+          changeOrigin: true,
+          target:
+                        "https://reedsmith.saplingdata.com/cobra/api/urn/com/loki/core/model/api/query/v/",
+          auth: `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`,
         },
       },
     };
+  // } else {
+  //   baseConfig.build.rollupOptions.output = {
+  //     ...baseConfig.build.rollupOptions.output,
+  //     globals: { lokiJs: "loki" },
+  //   };
+  //   baseConfig.build.lib = {
+  //     name: "VM",
+  //     entry,
+  //     formats: ["iife"],
+  //   };
   }
-  buildOptions = {
-    ...buildOptions,
-    ...{
-      lib: {
-        entry: path.resolve(srcDir, 'main.js'),
-        name: 'vm',
-      },
-    },
-  };
-  // buildOptions.rollupOptions.output = {
-  //   entryFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name].js`,
-  //   chunkFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name].js`,
-  //   assetFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name][extname]`,
-  // };
-  // baseConfig.build = buildOptions;
-  return {
-    // build specific config
-    ...baseConfig,
-    // assetsInclude: [".svg", ".woff", ".eot", ".ttf"],
-    ...{
-      plugins: [
-        fixLokiRefs(),
-        // url({
-        //   fileName: `${packageJson.appInfo.loki.pageCodeName}![hash].[name][extname]`,
-        //   include: [
-        //     "**/*.ico",
-        //     "**/*.svg",
-        //     "**/*.woff",
-        //     "**/*.eot",
-        //     "**/*.ttf",
-        //   ],
-        // }),
-        vue(),
-      ],
-    },
-  };
+  return baseConfig;
 };
