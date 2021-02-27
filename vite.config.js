@@ -26,6 +26,7 @@ let buildOptions = {
  */
 const baseConfig = {
   root: "./",
+  base: './',
   resolve: {
     alias: [
       {
@@ -70,15 +71,15 @@ export default ({ command, mode }) => {
       },
     };
   }
-  // buildOptions = {
-  //   ...buildOptions,
-  //   ...{
-  //     lib: {
-  //       entry: path.resolve(srcDir, 'main.js'),
-  //       name: 'vm',
-  //     },
-  //   },
-  // };
+  buildOptions = {
+    ...buildOptions,
+    ...{
+      lib: {
+        entry: path.resolve(srcDir, 'main.js'),
+        name: 'vm',
+      },
+    },
+  };
   // buildOptions.rollupOptions.output = {
   //   entryFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name].js`,
   //   chunkFileNames: `${packageJson.appInfo.loki.pageCodeName}![hash].[name].js`,
