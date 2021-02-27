@@ -19,6 +19,7 @@
     "loki": "node uploadToLoki.js"
   },
   "dependencies": {
+    "@iconify/iconify": "^1.0.7",
     "@vitejs/plugin-vue": "^1.1.4",
     "autoprefixer": "^10.2.4",
     "axios": "^0.21.1",
@@ -38,6 +39,8 @@
   "devDependencies": {
     "@babel/core": "^7.12.17",
     "@babel/preset-env": "^7.12.17",
+    "@iconify/json": "^1.1.309",
+    "@purge-icons/core": "^0.7.0",
     "@rollup/plugin-alias": "^3.1.2",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-node-resolve": "^11.2.0",
@@ -59,6 +62,9 @@
     "postcss": "^8.2.6",
     "typescript": "^4.1.5",
     "vite-babel-plugin": "0.0.2",
+    "vite-plugin-components": "^0.7.4",
+    "vite-plugin-html": "^2.0.2",
+    "vite-plugin-purge-icons": "^0.7.0",
     "vue-jest": "^5.0.0-alpha.7",
     "vue-loader": "^15.9.6"
   }
