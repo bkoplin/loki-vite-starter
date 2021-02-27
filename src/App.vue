@@ -1,6 +1,5 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <LokiDataTable />
     <HelloWorld msg="Welcome to your Loki Vue 3 + Vite Starter!" />
     <button class="inline-flex items-center px-2.5 py-1.5 mt-3 border
       border-transparent text-xs font-medium rounded shadow-sm text-white
@@ -16,6 +15,7 @@ import { provide } from "vue";
 export default {
   setup() {
     provide('loki', window.loki);
+    // eslint-disable-next-line no-unused-vars
     const tailwindCheck = () => {
       // eslint-disable-next-line no-alert
       alert('Yay Tailwind!');
