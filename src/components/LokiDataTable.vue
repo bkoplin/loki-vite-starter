@@ -5,7 +5,7 @@
       :field="col.field"
       :header="col.header"
       :key="col.field"
-      sortable="true"
+      :sortable="true"
     ></Column>
 </DataTable>
 
@@ -14,9 +14,6 @@
 <script>
 // @ts-check
 /* eslint-disable no-console */
-import "primeicons/primeicons.css";
-import "primevue/resources/primevue.min.css";
-import "primevue/resources/themes/bootstrap4-light-blue/theme.css";
 import axios from 'axios';
 import { zipObject, upperCase } from "lodash-es";
 import { reactive, inject } from 'vue';

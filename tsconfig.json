@@ -10,7 +10,6 @@
     "module": "ESNEXT",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "typeRoots": ["./node_modules/**", "./**.*.d.ts"]
+    "allowSyntheticDefaultImports": true
   }
 }
