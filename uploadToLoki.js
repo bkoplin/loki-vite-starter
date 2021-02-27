@@ -35,7 +35,8 @@ const resourceUrl = "/urn/com/loki/core/model/api/resource/v";
 const pageFileListUrl = `/urn/com/loki/core/model/api/list/v/urn/com/${loki.cloudCodeName}/${loki.appCodeName}/app/pages/${loki.pageCodeName}?format=json`;
 const pageFileUploadUrl = `/urn/com/loki/core/model/api/resource/v/urn/com/${loki.cloudCodeName}/${loki.appCodeName}/app/pages/${loki.pageCodeName}!`;
 const pageDataUploadUrl = `/urn/com/loki/modeler/model/types/combinedPageExt/v/urn/com/${loki.cloudPrefix}/${loki.appCodeName}/app/pages/${loki.pageCodeName}`;
-const queryUploadUrl = `/urn/com/loki/modeler/model/types/queryExt/v/urn/com/${loki.cloudPrefix}/${loki.appCodeName}/model/queries/${loki.pageCodeName}`;
+const queryUploadUrl = `/urn/com/loki/modeler/model/types/queryExt/v/urn/com/${ loki.cloudPrefix }/${ loki.appCodeName }/model/queries/${ loki.pageCodeName }`;
+const queryBaseUrn = `urn:com:${loki.cloudPrefix}:${loki.appCodeName}:model:queries:${loki.pageCodeName}`;
 
 const lokiSession = axios.create({
   baseURL: baseUrl,
