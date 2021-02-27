@@ -34,7 +34,7 @@ export default {
       results: [],
     });
     axios.get(queryUrl, {
-      params: { queryUrn: `${queryBaseUrn}#test` },
+      params: { queryUrn: import.meta.env.DEV ? 'urn:com:reedsmith:cobra:data:insights:Q2EELQGJ:components:component1' : `${queryBaseUrn}#test` },
     }).then((d) => {
       console.log(d);
       const { data: { columnNames, results } } = d;
