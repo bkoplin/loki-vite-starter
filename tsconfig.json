@@ -3,12 +3,14 @@
   "extends": "@tsconfig/node12/tsconfig.json",
   "include": ["src/**.*"],
   "compilerOptions": {
+    "lib": ["DOM", "ESNext"],
     "outDir": "./dist",
     "allowJs": true,
     "resolveJsonModule": true,
     "module": "ESNEXT",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./node_modules/**", "./**.*.d.ts"]
   }
 }
