@@ -10,11 +10,16 @@
   </div>
 </template>
 
-<script setup>
-// eslint-disable-next-line no-unused-vars
-const tailwindCheck = () => {
-  // eslint-disable-next-line no-alert
-  alert('Yay Tailwind!');
+<script>
+import {provide} from "vue"
+export default {
+  setup() {
+    provide('loki', window.loki)
+    const tailwindCheck = () => {
+      // eslint-disable-next-line no-alert
+      alert('Yay Tailwind!');
+    };
+  },
 };
 </script>
 
