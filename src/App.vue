@@ -11,10 +11,11 @@
 </template>
 
 <script>
-import {provide} from "vue"
+import { provide } from "vue";
+
 export default {
   setup() {
-    provide('loki', window.loki)
+    provide('loki', window.loki);
     const tailwindCheck = () => {
       // eslint-disable-next-line no-alert
       alert('Yay Tailwind!');
