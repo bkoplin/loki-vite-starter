@@ -3,7 +3,6 @@
   "extends": "@tsconfig/node12/tsconfig.json",
   "include": ["src/**.*"],
   "compilerOptions": {
-    "rootDir": "./src",
     "outDir": "./dist",
     "allowJs": true,
     "resolveJsonModule": true,
