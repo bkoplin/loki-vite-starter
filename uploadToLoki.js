@@ -1,50 +1,26 @@
 // @ts-check
 /* eslint-disable no-console, no-loop-func, max-len */
-require("dotenv").config();
-
-const axios = require("axios").default;
+require('dotenv').config()
+const axios = require('axios').default;
 const fs = require("fs");
 const grayMatter = require("gray-matter");
 const path = require("path");
+const esm = require('esm')(module);
 
-/**
- * @typedef {import('./package.json')} PackageJson
- * @typedef {import('./types').PageDataObject} PageDataObject
- * @typedef {import('./types').QueryDataObject} QueryDataObject
- * @typedef {import('./types').ChildQuery} ChildQuery
- *
- * */
-
-/**
- * @type {PackageJson}
- * @property {PackageJson['appInfo']} appInfo - The application definition object
- * @property {PackageJson['appInfo']['loki']} appInfo.loki - The Loki portion of the application definition
- * @property {PackageJson['appInfo']['loki']['appCodeName']} appInfo.loki.appCodeName - The URN segment identifying the Loki app that you plan to deploy to (the last segment of loki.app.rootUrn)
- * @property {PackageJson['appInfo']['loki']['pageCodeName']} appInfo.loki.pageCodeName - The page in Loki's App Builder that you plan to deploy to
- * @property {PackageJson['appInfo']['loki']['cloudPrefix']} appInfo.loki.cloudPrefix - The subdomain of your cloud's url
- * @property {PackageJson['appInfo']['loki']['cloudCodeName']} appInfo.loki.cloudCodeName - The name of your cloud environment
- * @property {PackageJson['appInfo']['loki']['pageName']} appInfo.loki.pageName - The name of the page (the page title)
- * */
-const packageJson = require("./package.json");
 
 const {
-  appInfo: { loki },
-} = packageJson;
-const baseUrl = `https://${loki.cloudPrefix}.saplingdata.com/${loki.appCodeName}-AppBuilder/api`;
-const resourceUrl = "/urn/com/loki/core/model/api/resource/v";
-const pageFileListUrl = `/urn/com/loki/core/model/api/list/v/urn/com/${loki.cloudCodeName}/${loki.appCodeName}/app/pages/${loki.pageCodeName}?format=json`;
-const pageFileUploadUrl = `/urn/com/loki/core/model/api/resource/v/urn/com/${loki.cloudCodeName}/${loki.appCodeName}/app/pages/${loki.pageCodeName}!`;
-const pageDataUploadUrl = `/urn/com/loki/modeler/model/types/combinedPageExt/v/urn/com/${loki.cloudPrefix}/${loki.appCodeName}/app/pages/${loki.pageCodeName}`;
-const queryUploadUrl = `/urn/com/loki/modeler/model/types/queryExt/v/urn/com/${ loki.cloudPrefix }/${ loki.appCodeName }/model/queries/${ loki.pageCodeName }`;
-const queryBaseUrn = `urn:com:${loki.cloudPrefix}:${loki.appCodeName}:model:queries:${loki.pageCodeName}`;
+  appInfo, queryUploadUrl, pageDataUploadUrl, pageFileUploadUrl, pageFileListUrl, resourceUrl, baseURL
+} = esm('./urlsAndUrns.js');
 
+const { loki } = appInfo;
 const lokiSession = axios.create({
-  baseURL: baseUrl,
+  baseURL,
   auth: {
     username: process.env.LOKI_USERNAME,
     password: process.env.LOKI_PASSWORD,
   },
 });
+
 
 const pushToLoki = async () => {
   const pageDataObject = pageData(loki);
@@ -101,7 +77,7 @@ async function deleteCurrentFiles(files) {
 
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < files.length; i++) {
-    const deleteUrl = `${resourceUrl}/${files[i].urn.replace(/[:]/g, "/")}`;
+    const deleteUrl = path.join(resourceUrl, files[i].urn.replace(/[:]/g, "/"));
     // eslint-disable-next-line no-await-in-loop
     await lokiSession
       .delete(deleteUrl)
@@ -127,8 +103,8 @@ const deployApp = async () => {
 };
 
 /**
- * @param {PackageJson['appInfo']['loki']} l The appInfo.loki attribute of package.json for the application
- * @returns {PageDataObject} A data object defining the page to save in AppBuilder
+ * @param {import("./urlsAndUrns.js").PackageJson["appInfo"]["loki"]} l The appInfo.loki attribute of package.json for the application
+ * @returns {import("./types").PageDataObject} A data object defining the page to save in AppBuilder
  */
 function pageData(l) {
   return {
@@ -151,14 +127,10 @@ function pageData(l) {
                     "urn:com:loki:core:model:operations:webService:methods:freemarkerPage",
         pageTemplate: `urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}!index.html`,
         securityFunctionGroups: [],
-        actionImpls: [
-          {
-            action: "urn:com:loki:core:model:actions:get",
-            securityFunctionGroups: [
-              `urn:com:${l.cloudPrefix}:${l.appCodeName}:model:functions:generalAccess`,
-            ],
-          },
-        ],
+        actionImpls: [{
+          action: "urn:com:loki:core:model:actions:get",
+          securityFunctionGroups: [`urn:com:${l.cloudPrefix}:${l.appCodeName}:model:functions:generalAccess`],
+        }],
       },
       {
         operation: "urn:com:loki:core:model:operations:render",
@@ -179,16 +151,14 @@ function pageData(l) {
     inactive: false,
     lastEditByUrn: process.env.LOKI_USER_URN,
     lastEditDate: new Date().toISOString(),
-    pages: [
-      {
-        urn: `urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}!index.html`,
-      },
-    ],
+    pages: [{
+      urn: `urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}!index.html`,
+    }],
   };
 }
 /**
- * @param {PackageJson['appInfo']['loki']} l The appInfo.loki attribute of package.json for the application
- * @returns {QueryDataObject} A data object defining the query to save in AppBuilder
+ * @param {import("./urlsAndUrns.js").PackageJson["appInfo"]["loki"]} l The appInfo.loki attribute of package.json for the application
+ * @returns {import("./types").QueryDataObject} A data object defining the query to save in AppBuilder
  */
 function getQueryData(l) {
   const queryUrn = `urn:com:${l.cloudPrefix}:${l.appCodeName}:model:queries:${l.pageCodeName}`;
@@ -205,7 +175,7 @@ function getQueryData(l) {
       const { data, content: queryString } = grayMatter(str);
       if (!data.dataSpaceUrn) throw Error("You must specify a dataSpaceUrn");
       if (!data.name) throw Error('You must give the child query a name');
-      /** @type {ChildQuery} */
+      /** @type {import("./types").ChildQuery} */
       const queryObject = {
         urn: `${queryUrn}#${data.name}`,
         queryString,
@@ -227,9 +197,7 @@ function getQueryData(l) {
     name: `${l.pageName} Queries`,
     queryString: '',
     summary: `Queries necessary to run page ${l.pageName} at urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}`,
-    securityFunctionUrns: [
-      `urn:com:reedsmith:${l.appCodeName}:model:functions:generalAccess`,
-    ],
+    securityFunctionUrns: [`urn:com:reedsmith:${l.appCodeName}:model:functions:generalAccess`],
     childQueries,
     inactive: false,
     lastEditDate: (new Date()).toISOString(),
