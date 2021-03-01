@@ -6,10 +6,8 @@ const env = dotEnv.config({ path: "./.env" }).parsed;
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import Components from "vite-plugin-components";
-// import { injectHtml, minifyHtml } from "vite-plugin-html";
 
 import { fixLokiRefs } from "./fixLokiRefs";
-// import packageJson from "./package.json";
 
 const projectRootDir = path.resolve(__dirname);
 
