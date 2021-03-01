@@ -5,9 +5,8 @@ import dotEnv from "dotenv";
 const env = dotEnv.config({ path: "./.env" }).parsed;
 import vue from "@vitejs/plugin-vue";
 import path from "path";
-import ViteComponents from "vite-plugin-components";
+import Components from "vite-plugin-components";
 // import { injectHtml, minifyHtml } from "vite-plugin-html";
-import PurgeIcons from "vite-plugin-purge-icons";
 
 import { fixLokiRefs } from "./fixLokiRefs";
 // import packageJson from "./package.json";
@@ -27,7 +26,7 @@ const baseConfig = {
   plugins: [
     fixLokiRefs(),
     vue(),
-    ViteComponents({
+    Components({
       dirs: [
         "src",
         "node_modules/primevue",
@@ -79,12 +78,11 @@ const baseConfig = {
     proxy: {
       "^.*/query/.*": {
         changeOrigin: true,
-        target:
-                      "https://reedsmith.saplingdata.com/"+env.LOKI_TEST_CLOUDNAME+"/api/urn/com/loki/core/model/api/query/v/",
+        target: `https://reedsmith.saplingdata.com/${env.LOKI_TEST_CLOUDNAME}/api/urn/com/loki/core/model/api/query/v/`,
         auth: `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`,
       },
     },
-  }
+  },
 };
 
 /** @type{import('vite').UserConfigFn} */
