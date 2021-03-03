@@ -1,7 +1,9 @@
+// @ts-check
+
 /**
  * A Loki JavaScript utility providing various functions for loki data and services
  * @module lokiJs
- * available at urn:com:loki:js:app:pages:lokiJs!loki.js
+ * available at urn:com:loki:js:app:pages:lokiJs!js
  */
 
 /* Assign freemarker variables that allow freemarker tags not to mess up js syntax
