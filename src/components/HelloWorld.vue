@@ -38,8 +38,10 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
+import { reactive, onMounted, ref} from 'vue';
+import { upperCase } from "lodash-es";
+import loki from "../loki/index";
+import { queryBaseUrn } from '../../urlsAndUrns';
 export default {
   props: {
     msg: {
@@ -55,11 +57,24 @@ export default {
     const count = ref(0);
     // eslint-disable-next-line no-return-assign
     const increment = () => (count.value += props.by);
+    console.log(loki);
+    const state = reactive({
+      columns: [],
+      results: [],
+    });
+    onMounted(async () => {
+      let data = await loki.data.query({queryUrn: `${queryBaseUrn}#test`, mapResults: true})
+      console.log(data);
+      const { columnNames, results }  = data;
+      state.columns = columnNames.map((c) => ({ field: c, header: upperCase(c) }));
+      state.results = results;
+    });
 
     return {
       props,
       count,
       increment,
+      ...state
     };
   },
 };
