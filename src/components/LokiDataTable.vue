@@ -27,12 +27,11 @@ export default {
       results: [],
     });
     onMounted(async () => {
-      let d;
-      loki.data.query({queryUrn: `${queryBaseUrn}#test`, mapResults: true})
-      console.log(d);
-      const { data: { columnNames, results } } = d;
+      let data = await loki.data.query({queryUrn: `${queryBaseUrn}#test`, mapResults: true})
+      console.log(data);
+      const { columnNames, results }  = data;
       state.columns = columnNames.map((c) => ({ field: c, header: upperCase(c) }));
-      state.results = results.map((r) => zipObject(columnNames, r));
+      state.results = results;
     });
 
     return state;

@@ -23,7 +23,7 @@
 
 /** @type {lokiJs} */
 import axios from "axios";
-
+import { isArray } from "lodash-es";
 const loki = {};
 
 /**
@@ -1052,15 +1052,18 @@ loki.data.saveEntity = function(urn, viewUrn, data, options) {
   }
 
   var url = loki.web.dataServiceUrl(urn, viewUrn, options);
-  var promise = $.ajax({
+  /** @type {JQueryAjaxSettings} */
+  const ajaxOptions = {
     method: "POST",
     contentType: "application/json",
     url: url,
     data: typeof data === "string" ? data : JSON.stringify(data),
     dataType: dataType,
-    jsonp: jsonpCallback, // name of callback param
-  });
-  promise = loki.data._handleJsonp(promise, options);
+    jsonp: jsonpCallback,
+  };
+  var promise = axios.get(url, {data}).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
+  // promise = loki.data._handleJsonp(promise, options);
   return promise;
 };
 
@@ -1151,14 +1154,16 @@ loki.data.deleteItem = function(urn, options) {
       options
     );
   }
-
-  var promise = $.ajax({
+  /** @type {JQueryAjaxSettings} */
+  const ajaxOptions = {
     method: "DELETE",
     url: url,
     dataType: dataType,
-    jsonp: jsonpCallback, // name of callback param
-  });
-  promise = loki.data._handleJsonp(promise, options);
+    jsonp: jsonpCallback,
+  };
+  var promise = axios.delete(url).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
+  // promise = loki.data._handleJsonp(promise, options);
   return promise;
 };
 
@@ -1198,14 +1203,16 @@ loki.data.head = function(urn, options) {
     jsonpCallback = "jsoncallback";
     dataType = "jsonp"; // automatically adds callback param to url
   }
-
-  var promise = $.ajax({
+  /** @type {JQueryAjaxSettings} */
+  const ajaxOptions = {
     method: "HEAD",
     contentType: "application/json",
     url: url,
     dataType: dataType,
-    jsonp: jsonpCallback, // name of callback param
-  });
+    jsonp: jsonpCallback,
+  };
+  var promise = axios.head(url).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
   var cPromise = promise.then(function(data, status, res) {
     var lastModified = res.getResponseHeader("Last-Modified");
     return {
@@ -1264,13 +1271,16 @@ loki.data.list = function(parentUrn, options) {
   }
 
   var url = loki.web.webServiceUrl("urn:com:loki:core:model:api:list", options);
-  var promise = $.ajax({
+  /** @type {JQueryAjaxSettings} */
+  const ajaxOptions = {
     type: "GET",
     url: url,
     dataType: dataType,
-    jsonp: jsonpCallback, // name of callback param
-  });
-  promise = loki.data._handleJsonp(promise, options);
+    jsonp: jsonpCallback,
+  };
+  var promise = axios.get(url).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
+  // promise = loki.data._handleJsonp(promise, options);
   return promise;
 };
 
@@ -1296,11 +1306,15 @@ loki.data.loadResource = function(urn, options) {
   }
   options.queryParams = options.queryParams + "noCache=" + new Date().getTime(); // prevent caching
   var url = loki.web.resourceUrl(urn, options);
-  var promise = $.ajax({
+
+  /** @type {JQueryAjaxSettings} */
+  const ajaxOptions = {
     type: "GET",
     dataType: "text",
     url: url,
-  });
+  };
+  var promise = axios.get(url, {responseType: 'text'}).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
   return promise;
 };
 
@@ -1329,7 +1343,7 @@ loki.data._mapResultsFilter = function(results, hasOutputview) {
     newResults = [];
     var columnNames = results.columnNames;
     if (columnNames) {
-      $.each(results.results, function(i, result) {
+      results.results.forEach(function(result, i) {
         newResults.push(loki.data._hash(columnNames, result));
       });
     }
@@ -1338,7 +1352,7 @@ loki.data._mapResultsFilter = function(results, hasOutputview) {
   return results;
 };
 loki.data._addParamValue = function(name, value, paramParam, prefix) {
-  if ($.isArray(value)) {
+  if (isArray(value)) {
     // This value is an array, repeat all values in the url parameter
     for (var j = 0; j < value.length; j++) {
       paramParam =
@@ -1352,7 +1366,7 @@ loki.data._addParamValue = function(name, value, paramParam, prefix) {
 };
 loki.data._addParams = function(params, prefix) {
   var paramParam = "";
-  if ($.isArray(params)) {
+  if (isArray(params)) {
     for (var i = 0; i < params.length; i++) {
       paramParam = loki.data._addParamValue(
         params[i].name,
@@ -1471,16 +1485,19 @@ loki.data.query = function(options, unused) {
       postOpts.numRequested = postOpts.num; // the post json param is numRequested for the web service
       delete postOpts.num;
     }
-    promise = $.ajax({
+    const ajaxOptions = {
       type: "POST",
       url: url,
       contentType: "application/json",
       data: JSON.stringify(postOpts),
       dataType: dataType,
-      jsonp: jsonpCallback, // name of callback param
+      jsonp: jsonpCallback,
+
       // beforeSend: function(xhr){loki.data._setHeaders(xhr,headers);},
-      headers: headers, // requires jquery 1.5
-    });
+      headers: headers,
+    };
+    promise = axios.post(url, {data: postOpts}).then(d => d.data)
+    // promise = $.ajax(ajaxOptions);
   } else {
     // GET
     var params;
@@ -1534,7 +1551,7 @@ loki.data.query = function(options, unused) {
     // Numbered parameters are p1, p2, p3, etc and can be multi valued arrays
     if (options.params) {
       for (var i = 0; i < options.params.length; i++) {
-        if ($.isArray(options.params[i])) {
+        if (isArray(options.params[i])) {
           // This parameter is an array, repeat its values in the p{x} url parameter
           for (var j = 0; j < options.params[i].length; j++) {
             paramParam =
@@ -1572,15 +1589,18 @@ loki.data.query = function(options, unused) {
       connection: options.connection,
       urlPrefix: options.urlPrefix,
     });
-
-    promise = $.ajax({
+    /** @type {JQueryAjaxSettings} */
+    const ajaxOptions = {
       type: "GET",
       url: url,
       dataType: dataType,
-      jsonp: jsonpCallback, // name of callback param
+      jsonp: jsonpCallback,
+
       // beforeSend: function(xhr){loki.data._setHeaders(xhr,headers);},
-      headers: headers, // requires jquery 1.5
-    });
+      headers: headers,
+    };
+    promise = axios.get(url).then(d => d.data)
+    // promise = $.ajax(ajaxOptions);
   }
   promise = loki.data._handleJsonp(promise, options);
 
@@ -1633,7 +1653,8 @@ loki.data._handleJsonp = function(promise, options) {
 loki.user.login = function(username, password) {
   var data = { username: username, password: password };
   var url = loki.web.webServiceUrl("urn:com:loki:core:model:api:login");
-  var promise = $.ajax({
+  /** @type {JQueryAjaxSettings} */
+  const ajaxOptions = {
     type: "POST",
     url: url,
     dataType: "json",
@@ -1642,7 +1663,9 @@ loki.user.login = function(username, password) {
     data: JSON.stringify(data),
     //processData: false, // send data in body
     contentType: "application/json",
-  });
+  };
+  var promise = axios.post(url, {data}).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
   return promise.then(function(data) {
     if (data && data.userUrn) {
       loki._config.userUrn = data.userUrn;
@@ -1669,13 +1692,17 @@ loki.user.createGuestUser = function() {
   var url = loki.web.webServiceUrl(
     "urn:com:loki:user:model:api:createGuestUser"
   );
-  var promise = $.ajax({
+  /** @type {JQueryAjaxSettings} */
+  var promise = axios.post(url, {data}).then(d => d.data)
+  const ajaxOptions = {
     type: "POST",
     url: url,
     dataType: "json",
     // data: JSON.stringify(data),
     contentType: "application/json",
-  });
+  };
+  // var promise = $.ajax(ajaxOptions);
+  var promise = axios.post(url).then(d => d.data)
   return promise.then(function(data) {
     if (loki._config) {
       loki._config.userUrn = data.newGuestUserUrn;
@@ -1709,13 +1736,16 @@ loki.user.createMyUserRequest = function(options) {
   var url = loki.web.webServiceUrl(
     "urn:com:loki:user:model:api:createMyUserRequest"
   );
-  var promise = $.ajax({
+  /** @type {JQueryAjaxSettings} */
+  const ajaxOptions = {
     type: "POST",
     url: url,
     dataType: "json",
     data: JSON.stringify(data),
     contentType: "application/json",
-  });
+  };
+  var promise = axios.post(url, {data}).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
   return promise.then(function(data) {
     return data;
   });
@@ -1747,13 +1777,16 @@ loki.user.inviteNewUserRequest = function(options) {
   var url = loki.web.webServiceUrl(
     "urn:com:loki:user:model:api:inviteNewUserRequest"
   );
-  var promise = $.ajax({
+  /** @type {JQueryAjaxSettings} */
+  const ajaxOptions = {
     type: "POST",
     url: url,
     dataType: "json",
     data: JSON.stringify(data),
     contentType: "application/json",
-  });
+  };
+  var promise = axios.post(url, { data }).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
   return promise.then(function(data) {
     return data;
   });
@@ -1777,13 +1810,15 @@ loki.user.createUserConfirm = function(token, options) {
   var url = loki.web.webServiceUrl(
     "urn:com:loki:user:model:api:createUserConfirm"
   );
-  var promise = $.ajax({
+  const ajaxOptions = {
     type: "POST",
     url: url,
     dataType: "json",
     data: JSON.stringify(data),
     contentType: "application/json",
-  });
+  };
+  var promise = axios.post(url, { data }).then(d => d.data)
+  // var promise = $.ajax(ajaxOptions);
   return promise.then(function(data) {
     if (loki._config) {
       loki._config.userUrn = data.newUserUrn;

@@ -74,7 +74,7 @@ const baseConfig = {
     https: false,
     cors: true,
     proxy: {
-      "^.*/query/.*": {
+      "^.*loki.web.serviceUrlPrefix.*": {
         changeOrigin: true,
         target: `https://reedsmith.saplingdata.com/${env.LOKI_TEST_CLOUDNAME}/api/urn/com/loki/core/model/api/query/v/`,
         auth: `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`,
