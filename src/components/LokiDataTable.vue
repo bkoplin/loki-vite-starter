@@ -14,10 +14,10 @@
 <script>
 // @ts-check
 /* eslint-disable no-console */
-import { zipObject, upperCase } from "lodash-es";
-import { reactive, inject, onMounted } from 'vue';
+import { upperCase } from "lodash-es";
+import { reactive, onMounted } from 'vue';
 import loki from "../loki/index";
-import { queryBaseUrn, queryUrl } from '../../urlsAndUrns';
+import { queryBaseUrn } from '../../urlsAndUrns';
 
 export default {
   setup() {
