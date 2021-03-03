@@ -14,14 +14,13 @@
 <script>
 // @ts-check
 /* eslint-disable no-console */
-import axios from "axios";
 import { zipObject, upperCase } from "lodash-es";
 import { reactive, inject, onMounted } from 'vue';
+import loki from "../loki/index";
 import { queryBaseUrn, queryUrl } from '../../urlsAndUrns';
 
 export default {
   setup() {
-    const loki = inject('loki');
     console.log(loki);
     const state = reactive({
       columns: [],
@@ -29,11 +28,7 @@ export default {
     });
     onMounted(async () => {
       let d;
-      if (import.meta.env.DEV) {
-        d = await axios.get(queryUrl, {
-          params: {queryUrn: 'urn:com:reedsmith:cobra:data:insights:Q2EELQGJ:components:component1'},
-        });
-      } else d = { data: await loki.data.query({ queryUrn: `${queryBaseUrn}#test` }) };
+      loki.data.query({queryUrn: `${queryBaseUrn}#test`, mapResults: true})
       console.log(d);
       const { data: { columnNames, results } } = d;
       state.columns = columnNames.map((c) => ({ field: c, header: upperCase(c) }));
