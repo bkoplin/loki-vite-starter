@@ -81,12 +81,12 @@ Actions will fail until these lines are uncommented.
 Note: GitHub Actions offers a limited number of build minutes per month for free accounts. Please make sure that you are aware of your limit if you haven’t used GitHub Actions before.
 
 ### Writing queries
-Any `.SQL` file added to `./src/queries` will be added as a child query to a query object saved in the cloud with the URN `urn:com:[appInfo.loki.cloudPrefix]:[appInfo.loki.appCodeName]:model:queries:[appInfo.loki.pageCodeName]`. Each `.SQL` file should have a YAML head as follows:
+Any `.SQL` file added to `./src/queries` will be added as a child query to a query object saved in the cloud with the URN `urn:com:[VITE_CLOUD_CODE_NAME]:[VITE_APP_CODE_NAME]:model:queries:[VITE_PAGE_CODE_NAME]`. Each `.SQL` file should have a YAML head as follows:
 
 ```
 ---
 name: [REQUIRED: URN-compliant name of the child query]
-dataSpaceUrn: [REQUIRED: URN OF THE DATASPACE FOR THE QUERY, E.G., "urn:com:reedsmith:cobra:model:dataSpaces:testapp_dw"]
+dataSpaceUrn: [REQUIRED: URN OF THE DATASPACE FOR THE QUERY, E.G., "urn:com:cloud:app:model:dataSpaces:testapp_dw"]
 queryParams: [OPTIONAL: OBJECT WITH QUERY PARAMETER DEFINITIONS, E.G., {testParam: "urn:com:loki:core:model:types:string"}]
 ---
 ```
