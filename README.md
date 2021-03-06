@@ -61,7 +61,7 @@ The production build of your application, located in the `dist` directory by def
 ```
 Please make sure you update this information correctly, since it will be used to construct the API endpoints for deploying your code. It is recommended to set up a page in Loki’s App Builder (along with an appropriate security model) for your Vue app to deploy to **before** configuring your Vue app.
 
-#### Environment variables
+### Environment variables
 Deploying to Loki requires providing access to valid Loki credentials via environment variables. Add a [.env file to your project root and use dotenv](https://github.com/motdotla/dotenv#readme) to accomplish this. For saving the compiled application to the Loki cloud, you need to set the following `.env` variables:  `LOKI_USER_URN`, `LOKI_USERNAME` and `LOKI_PASSWORD` as your variable names. For testing purposes, you need to be able to run API enpoint calls to a CaseMaker cloud; in the case, you need an `.env` variable called `LOKI_TEST_CLOUDNAME`.
 
 
@@ -81,10 +81,23 @@ The `loki` command can be directly run from the command line or used as part of 
 Actions will fail until these lines are uncommented.
 
 Note: GitHub Actions offers a limited number of build minutes per month for free accounts. Please make sure that you are aware of your limit if you haven’t used GitHub Actions before.
+
+### Writing queries
+Any `.SQL` file added to `./src/queries` will be added as a child query to a query object saved in the cloud with the URN `urn:com:[appInfo.loki.cloudPrefix]:[appInfo.loki.appCodeName]:model:queries:[appInfo.loki.pageCodeName]`. Each `.SQL` file should have a YAML head as follows:
+
+```
+---
+name: [REQUIRED: URN-compliant name of the child query]
+dataSpaceUrn: [REQUIRED: URN OF THE DATASPACE FOR THE QUERY, E.G., "urn:com:reedsmith:cobra:model:dataSpaces:testapp_dw"]
+queryParams: [OPTIONAL: OBJECT WITH QUERY PARAMETER DEFINITIONS, E.G., {testParam: "urn:com:loki:core:model:types:string"}]
+---
+```
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
  
+
 
