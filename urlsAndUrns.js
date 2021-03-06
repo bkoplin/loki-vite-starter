@@ -15,12 +15,9 @@
 import packageJson from "./package.json";
 
 export const { appInfo } = packageJson;
-
 export const apiPath = `${appInfo.loki.appCodeName}-AppBuilder/api`;
 export const baseURL = `https://${appInfo.loki.cloudPrefix}.saplingdata.com`;
-
 export const resourceApi = `urn/com/loki/core/model/api/resource`;
-
 export const listApi = `urn/com/loki/core/model/api/list`;
 export const pageView = `urn/com/loki/modeler/model/types/combinedPageExt`;
 export const queryApi = `urn/com/loki/core/model/api/query`;
