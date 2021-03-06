@@ -1,11 +1,10 @@
 // @ts-check
 /* eslint-disable no-console, no-loop-func, max-len */
-require('dotenv').config();
+require('dotenv').config({path: "./.env"});
 const axios = require('axios').default;
 const fs = require("fs");
 const grayMatter = require("gray-matter");
 const path = require("path");
-const esm = require('esm')(module);
 
 const {
   LOKI_USERNAME,
@@ -15,11 +14,56 @@ const {
   VITE_APP_CODE_NAME,
   VITE_PAGE_NAME,
   VITE_PAGE_CODE_NAME,
-} = process.env
+} = process.env;
 
-const {
-  queryUploadUrl, pageDataUploadUrl, pageFileUploadUrl, pageFileListUrl, resourceUrl, baseURL,
-} = esm('./urlsAndUrns.js');
+const apiPath = `${VITE_APP_CODE_NAME}-AppBuilder/api`;
+const baseURL = `https://${VITE_CLOUD_CODE_NAME}.saplingdata.com`;
+const resourceApi = `urn/com/loki/core/model/api/resource`;
+const listApi = `urn/com/loki/core/model/api/list`;
+const pageView = `urn/com/loki/modeler/model/types/combinedPageExt`;
+
+const queryView = `urn/com/loki/modeler/model/types/queryExt`;
+
+const thisPagePath = [
+  `urn/com`,
+  VITE_CLOUD_CODE_NAME,
+  VITE_APP_CODE_NAME,
+  `app/pages`,
+  VITE_PAGE_CODE_NAME,
+].join('/');
+const pageFileListUrl = [
+  apiPath,
+  listApi,
+  "v",
+  thisPagePath,
+].join('/');
+const pageFileUploadUrl = [
+  apiPath,
+  resourceApi,
+  "v",
+  `${thisPagePath}!`,
+].join('/');
+const pageDataUploadUrl = [
+  apiPath,
+  pageView,
+  "v",
+  thisPagePath,
+].join('/');
+const queryUploadUrl = [
+  apiPath,
+  queryView,
+  "v",
+  `urn/com`,
+  VITE_CLOUD_CODE_NAME,
+  VITE_APP_CODE_NAME,
+  `model/queries`,
+  VITE_PAGE_CODE_NAME,
+].join('/');
+const resourceUrl = [
+  apiPath,
+  resourceApi,
+  "v",
+].join('/');
 
 const lokiSession = axios.create({
   baseURL,

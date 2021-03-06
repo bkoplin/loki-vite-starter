@@ -3,7 +3,6 @@
 import dotEnv from "dotenv";
 
 const env = dotEnv.config({ path: "./.env" }).parsed;
-const dev = dotEnv.config({ path: "./.env.development" }).parsed;
 
 import vue from "@vitejs/plugin-vue";
 import path from "path";
@@ -15,10 +14,19 @@ const projectRootDir = path.resolve(__dirname);
 
 const indexHTML = path.resolve(projectRootDir, "index.html");
 const srcDir = path.resolve(projectRootDir, "src");
-const entry = path.resolve(srcDir, "main.js");
 
-const { LOKI_PASSWORD, VITE_CLOUD_CODE_NAME, LOKI_USERNAME } = env;
-const { VITE_APP_CODE_NAME } = dev;
+const {
+  LOKI_PASSWORD,
+  VITE_CLOUD_CODE_NAME,
+  LOKI_USERNAME,
+  VITE_APP_CODE_NAME_TEST,
+  VITE_APP_CODE_NAME,
+  VITE_PAGE_CODE_NAME,
+  VITE_PAGE_NAME,
+} = env;
+
+const pageUrn = `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}`;
+// const { VITE_APP_CODE_NAME } = dev;
 
 /**
  * @type {import('vite').UserConfig}
@@ -27,7 +35,7 @@ const baseConfig = {
   root: "./",
   base: "./",
   plugins: [
-    fixLokiRefs(),
+    fixLokiRefs(VITE_PAGE_NAME, pageUrn),
     vue(),
     Components({
       dirs: [
@@ -74,9 +82,9 @@ const baseConfig = {
     https: false,
     cors: true,
     proxy: {
-      "^.*loki.web.serviceUrlPrefix.*": {
+      "^.*loki.web.serviceUrlPrefix.*query": {
         changeOrigin: true,
-        target: `https://${VITE_CLOUD_CODE_NAME}.saplingdata.com/${VITE_APP_CODE_NAME}/api/urn/com/loki/core/model/api/query/v/`,
+        target: `https://${VITE_CLOUD_CODE_NAME}.saplingdata.com/${VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`,
         auth: `${LOKI_USERNAME}:${LOKI_PASSWORD}`,
       },
     },

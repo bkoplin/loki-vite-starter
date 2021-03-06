@@ -110,6 +110,8 @@ dist
 dist-ssr
 *.local
 .env
+.env.development
+.env.production
 .vscode/launch.json
 .env.dev
 README.html
