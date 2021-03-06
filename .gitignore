@@ -112,3 +112,4 @@ dist-ssr
 .env
 .vscode/launch.json
 .env.dev
+README.html

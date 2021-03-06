@@ -2,15 +2,6 @@
   "name": "loki-vite-starter",
   "version": "0.1.0",
   "description": "",
-  "appInfo": {
-    "loki": {
-      "appCodeName": "The URN segment identifying the Loki app that you plan to deploy to (the last segment of loki.app.rootUrn)",
-      "pageCodeName": "The page in Loki's App Builder that you plan to deploy to",
-      "cloudPrefix": "The subdomain of your cloud's url",
-      "cloudCodeName": "The name of your cloud environment",
-      "pageName": "The name of the page (the page title)"
-    }
-  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

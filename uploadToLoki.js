@@ -1,36 +1,44 @@
 // @ts-check
 /* eslint-disable no-console, no-loop-func, max-len */
-require('dotenv').config()
+require('dotenv').config();
 const axios = require('axios').default;
 const fs = require("fs");
 const grayMatter = require("gray-matter");
 const path = require("path");
 const esm = require('esm')(module);
 
+const {
+  LOKI_USERNAME,
+  LOKI_PASSWORD,
+  LOKI_USER_URN,
+  VITE_CLOUD_CODE_NAME,
+  VITE_APP_CODE_NAME,
+  VITE_PAGE_NAME,
+  VITE_PAGE_CODE_NAME,
+} = process.env
 
 const {
-  appInfo, queryUploadUrl, pageDataUploadUrl, pageFileUploadUrl, pageFileListUrl, resourceUrl, baseURL
+  queryUploadUrl, pageDataUploadUrl, pageFileUploadUrl, pageFileListUrl, resourceUrl, baseURL,
 } = esm('./urlsAndUrns.js');
 
-const { loki } = appInfo;
 const lokiSession = axios.create({
   baseURL,
   auth: {
-    username: process.env.LOKI_USERNAME,
-    password: process.env.LOKI_PASSWORD,
+    username: LOKI_USERNAME,
+    password: LOKI_PASSWORD,
   },
 });
 
 
 const pushToLoki = async () => {
-  const pageDataObject = pageData(loki);
+  const pageDataObject = pageData();
   const distFiles = fs.readdirSync("./dist");
   const queryDir = "./src/queries";
   const queryFiles = fs
     .readdirSync(queryDir)
     .filter((p) => p.endsWith(".sql") || p.endsWith(".SQL"));
   if (queryFiles.length) {
-    const queryData = getQueryData(loki);
+    const queryData = getQueryData();
     await lokiSession.post(queryUploadUrl, queryData).then(() => {
       console.log(`Query "${queryData.name}" uploaded to ${queryData.urn}`);
     });
@@ -46,7 +54,7 @@ const pushToLoki = async () => {
 
     fs.readFile(filePath, "utf8", (err, data) => {
       // const baseFileName = file;
-      const baseFileName = file.replace(`${loki.pageCodeName}!`, '');
+      const baseFileName = file.replace(`${VITE_PAGE_CODE_NAME}!`, '');
       const uploadUrl = pageFileUploadUrl + baseFileName;
       lokiSession
         .post(uploadUrl, data, {
@@ -103,14 +111,13 @@ const deployApp = async () => {
 };
 
 /**
- * @param {import("./urlsAndUrns.js").PackageJson["appInfo"]["loki"]} l The appInfo.loki attribute of package.json for the application
  * @returns {import("./types").PageDataObject} A data object defining the page to save in AppBuilder
  */
-function pageData(l) {
+function pageData() {
   return {
-    urn: `urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}`,
-    names: [l.pageName],
-    name: l.pageName,
+    urn: `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}`,
+    names: [VITE_PAGE_NAME],
+    name: VITE_PAGE_NAME,
     summary: "",
     description: null,
     descriptionHtml: null,
@@ -125,18 +132,18 @@ function pageData(l) {
         operation: "urn:com:loki:core:model:operations:webService",
         method:
                     "urn:com:loki:core:model:operations:webService:methods:freemarkerPage",
-        pageTemplate: `urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}!index.html`,
+        pageTemplate: `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}!index.html`,
         securityFunctionGroups: [],
         actionImpls: [{
           action: "urn:com:loki:core:model:actions:get",
-          securityFunctionGroups: [`urn:com:${l.cloudPrefix}:${l.appCodeName}:model:functions:generalAccess`],
+          securityFunctionGroups: [`urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:model:functions:generalAccess`],
         }],
       },
       {
         operation: "urn:com:loki:core:model:operations:render",
         method:
                     "urn:com:loki:freemarker:model:methods:freemarkerRender",
-        pageTemplate: `urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}!index.html`,
+        pageTemplate: `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}!index.html`,
         securityFunctionGroups: [],
         actionImpls: [],
       },
@@ -149,19 +156,18 @@ function pageData(l) {
     ],
     combinedItemUrns: [],
     inactive: false,
-    lastEditByUrn: process.env.LOKI_USER_URN,
+    lastEditByUrn: LOKI_USER_URN,
     lastEditDate: new Date().toISOString(),
     pages: [{
-      urn: `urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}!index.html`,
+      urn: `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}!index.html`,
     }],
   };
 }
 /**
- * @param {import("./urlsAndUrns.js").PackageJson["appInfo"]["loki"]} l The appInfo.loki attribute of package.json for the application
  * @returns {import("./types").QueryDataObject} A data object defining the query to save in AppBuilder
  */
-function getQueryData(l) {
-  const queryUrn = `urn:com:${l.cloudPrefix}:${l.appCodeName}:model:queries:${l.pageCodeName}`;
+function getQueryData() {
+  const queryUrn = `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:model:queries:${VITE_PAGE_CODE_NAME}`;
   const srcDir = "./src/queries";
   const childQueries = [];
 
@@ -194,14 +200,14 @@ function getQueryData(l) {
 
   return {
     urn: queryUrn,
-    name: `${l.pageName} Queries`,
+    name: `"${VITE_PAGE_NAME}" Queries`,
     queryString: '',
-    summary: `Queries necessary to run page ${l.pageName} at urn:com:${l.cloudPrefix}:${l.appCodeName}:app:pages:${l.pageCodeName}`,
-    securityFunctionUrns: [`urn:com:reedsmith:${l.appCodeName}:model:functions:generalAccess`],
+    summary: `Queries necessary to run page ${VITE_PAGE_NAME} at\n\nurn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}`,
+    securityFunctionUrns: [`urn:com:reedsmith:${VITE_APP_CODE_NAME}:model:functions:generalAccess`],
     childQueries,
     inactive: false,
     lastEditDate: (new Date()).toISOString(),
-    lastEditByUrn: process.env.LOKI_USER_URN,
+    lastEditByUrn: LOKI_USER_URN,
   };
 }
 

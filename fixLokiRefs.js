@@ -1,8 +1,6 @@
 // @ts-check
 /* eslint-disable max-len */
-const {
-  appInfo: { loki },
-} = require("./package.json");
+import { pageUrn, VITE_PAGE_NAME } from './urlsAndUrns';
 
 /**
  * @param {string} h The compiled index.html HTML string, with reference to the bundled resources f in script and link taks
@@ -10,7 +8,7 @@ const {
  * @returns {string} the html string with paths in ref and src attributes replaced with loki.web.resourceUrl() functions
  */
 function renameResources(h, f) {
-  const urn = `urn:com:${loki.cloudCodeName}:${loki.appCodeName}:app:pages:${loki.pageCodeName}!`;
+  const urn = `${pageUrn}!`;
   const regexp = new RegExp(`(=")(?:)[^=]*(?:)(${f})(?:)[^=]*(")`, "g");
   return h.replace(regexp, `$1\${loki.web.resourceUrl('${urn}$2')}$3`);
 }
@@ -29,12 +27,12 @@ function fixLokiRefs() {
       bundleNames.push("favicon.ico");
       // eslint-disable-next-line no-use-before-define
       const n = bundleNames
-        .reduce((r, b) => renameResources(r, b), html)
+        .reduce((r, b) => renameResources(r, b), html);
         // .replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n<#include "urn:com:reedsmith:delorean:app:pages:htmlHeadLokiOnly">');
       /** @type {import('vite').HtmlTagDescriptor[]} */
       const tags = [{
         tag: "title",
-        children: loki.pageName,
+        children: VITE_PAGE_NAME,
       }];
       return { html: n, tags };
     },

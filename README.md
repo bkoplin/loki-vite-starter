@@ -45,25 +45,28 @@ If you would like to add E2E tests, it is recommended that you add a `test:e2e` 
 ### Lints and fixes files
 Linting is currently working in VS Code. Your file will be linted and fixed on save. See the [ESLint docs](https://eslint.org/) to learn how to configure lint for your particular needs.
 
-### Deploying to Loki
-The production build of your application, located in the `dist` directory by default, can be manually deployed to a page in a Loki OS application by running `npm run loki` from the command line. In order to properly deploy your code, update the following information in `package.json`:
+### Deploying to Loki and Environment Variables
+The production build of your application, located in the `dist` directory by default, can be manually deployed to a page in a Loki OS application by running `npm run loki` from the command line. In order to properly deploy your code, you must specify **both** an `.env` file and an `.env.development` file. All varibles beginning in `VITE_` will be exposed as `import.meta.env.VITE_` to your client source code according to the Vite API at [Env Variables and Modes](https://vitejs.dev/guide/env-and-mode.html#env-files). Deploying to Loki requires providing access to valid Loki credentials via environment variables. Read more about `.env` files [here](https://github.com/motdotla/dotenv#readme).
 
 ```
-"appInfo": {
-    "loki": {
-      "appCodeName": "The URN segment identifying the Loki app that you plan to deploy to (the last segment of loki.app.rootUrn)",
-      "pageCodeName": "The page in Loki's App Builder that you plan to deploy to",
-      "cloudPrefix": "The subdomain of your cloud's url",
-      "cloudCodeName": "The name of your cloud environment",
-      "pageName": "The name of the page (the page title)"
-    }
-  },
+.env
+
+LOKI_USERNAME               # Loki username
+LOKI_PASSWORD               # Loki password
+LOKI_USER_URN               # Full loki user URN (for saving uploaded data)
+VITE_CLOUD_CODE_NAME        # The URN segment identifying the Loki app that you plan to deploy to (the last segment of loki.app.rootUrn)
+VITE_APP_CODE_NAME          # The code name of the app to which the code will be deployed
+VITE_PAGE_NAME              # The name of the page (the <title> block)
+VITE_PAGE_CODE_NAME         # The code name of the page
 ```
+
+```
+.env.development
+
+VITE_APP_CODE_NAME          # The code name of the development environment app (used with server in vite.config.js)
+```
+
 Please make sure you update this information correctly, since it will be used to construct the API endpoints for deploying your code. It is recommended to set up a page in Loki’s App Builder (along with an appropriate security model) for your Vue app to deploy to **before** configuring your Vue app.
-
-### Environment variables
-Deploying to Loki requires providing access to valid Loki credentials via environment variables. Add a [.env file to your project root and use dotenv](https://github.com/motdotla/dotenv#readme) to accomplish this. For saving the compiled application to the Loki cloud, you need to set the following `.env` variables:  `LOKI_USER_URN`, `LOKI_USERNAME` and `LOKI_PASSWORD` as your variable names. For testing purposes, you need to be able to run API enpoint calls to a CaseMaker cloud; in the case, you need an `.env` variable called `LOKI_TEST_CLOUDNAME`.
-
 
 :warning: **DO NOT CHECK YOUR `.env` FILE INTO VERSION CONTROL** :warning:
 The starter’s `.gitignore` file is set up to ignore `.env` files by default; do not change this.

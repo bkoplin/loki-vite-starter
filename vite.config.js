@@ -3,6 +3,8 @@
 import dotEnv from "dotenv";
 
 const env = dotEnv.config({ path: "./.env" }).parsed;
+const dev = dotEnv.config({ path: "./.env.development" }).parsed;
+
 import vue from "@vitejs/plugin-vue";
 import path from "path";
 import Components from "vite-plugin-components";
@@ -14,6 +16,9 @@ const projectRootDir = path.resolve(__dirname);
 const indexHTML = path.resolve(projectRootDir, "index.html");
 const srcDir = path.resolve(projectRootDir, "src");
 const entry = path.resolve(srcDir, "main.js");
+
+const { LOKI_PASSWORD, VITE_CLOUD_CODE_NAME, LOKI_USERNAME } = env;
+const { VITE_APP_CODE_NAME } = dev;
 
 /**
  * @type {import('vite').UserConfig}
@@ -61,11 +66,6 @@ const baseConfig = {
         main: indexHTML,
       },
     },
-    // lib: {
-    //   name: "VM",
-    //   entry,
-    //   formats: ["iife"],
-    // },
     manifest: true,
     outDir: "dist",
     assetsDir: "./",
@@ -76,8 +76,8 @@ const baseConfig = {
     proxy: {
       "^.*loki.web.serviceUrlPrefix.*": {
         changeOrigin: true,
-        target: `https://reedsmith.saplingdata.com/${env.LOKI_TEST_CLOUDNAME}/api/urn/com/loki/core/model/api/query/v/`,
-        auth: `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`,
+        target: `https://${VITE_CLOUD_CODE_NAME}.saplingdata.com/${VITE_APP_CODE_NAME}/api/urn/com/loki/core/model/api/query/v/`,
+        auth: `${LOKI_USERNAME}:${LOKI_PASSWORD}`,
       },
     },
   },

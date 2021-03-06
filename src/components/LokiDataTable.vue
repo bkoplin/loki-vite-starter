@@ -17,7 +17,14 @@
 import { upperCase } from "lodash-es";
 import { reactive, onMounted } from 'vue';
 import loki from "../loki/index";
-import { queryBaseUrn } from '../../urlsAndUrns';
+
+const queryBaseUrn = [
+  `urn:com`,
+  import.meta.env.VITE_CLOUD_CODE_NAME,
+  import.meta.env.VITE_APP_CODE_NAME,
+  `model:queries`,
+  import.meta.env.VITE_PAGE_CODE_NAME,
+].join(":");
 
 export default {
   setup() {
@@ -27,9 +34,9 @@ export default {
       results: [],
     });
     onMounted(async () => {
-      let data = await loki.data.query({queryUrn: `${queryBaseUrn}#test`, mapResults: true})
+      const data = await loki.data.query({ queryUrn: `${queryBaseUrn}#test`, mapResults: true });
       console.log(data);
-      const { columnNames, results }  = data;
+      const { columnNames, results } = data;
       state.columns = columnNames.map((c) => ({ field: c, header: upperCase(c) }));
       state.results = results;
     });
