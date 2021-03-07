@@ -1,14 +1,13 @@
 // @ts-check
 /* eslint-disable import/no-extraneous-dependencies, no-unused-vars, import/first */
-import dotEnv from "dotenv";
-
-const env = dotEnv.config({ path: "./.env" }).parsed;
-
 import vue from "@vitejs/plugin-vue";
+import dotEnv from "dotenv";
 import path from "path";
 import Components from "vite-plugin-components";
 
 import { fixLokiRefs } from "./fixLokiRefs";
+
+const env = dotEnv.config({ path: "./.env" }).parsed;
 
 const projectRootDir = path.resolve(__dirname);
 
@@ -73,13 +72,15 @@ const baseConfig = {
     rollupOptions: {
       external: [localLoki], // see https://rollupjs.org/guide/en/#external
       output: {
+        format: "iife",
+        name: VITE_PAGE_CODE_NAME,
         globals: { [localLoki]: "loki" }, // see https://rollupjs.org/guide/en/#outputglobals for pattern
       },
       input: {
         main: indexHTML,
       },
     },
-    manifest: true,
+    // manifest: true,
     outDir: "dist",
     assetsDir: "./",
   },
