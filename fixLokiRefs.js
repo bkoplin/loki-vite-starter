@@ -7,7 +7,7 @@
  * @param {string} u The full URN of the page
  * @returns {string} the html string with paths in ref and src attributes replaced with loki.web.resourceUrl() functions
  */
-function renameResources(h, f, u) {
+ function renameResources(h, f, u) {
   const urn = `${u}!`;
   const regexp = new RegExp(`(=")(?:)[^=]*(?:)(${f})(?:)[^=]*(")`, "g");
   return h.replace(regexp, `$1\${loki.web.resourceUrl('${urn}$2')}$3`);
