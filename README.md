@@ -46,7 +46,7 @@ If you would like to add E2E tests, it is recommended that you add a `test:e2e` 
 Linting is currently working in VS Code. Your file will be linted and fixed on save. See the [ESLint docs](https://eslint.org/) to learn how to configure lint for your particular needs.
 
 ### Deploying to Loki and Environment Variables
-The production build of your application, located in the `dist` directory by default, can be manually deployed to a page in a Loki OS application by running `npm run loki` from the command line. In order to properly deploy your code, you must specify an `.env` file. All varibles beginning in `VITE_` will be exposed as `import.meta.env.VITE_` to your client source code according to the Vite API at [Env Variables and Modes](https://vitejs.dev/guide/env-and-mode.html#env-files). Deploying to Loki requires providing access to valid Loki credentials via environment variables. Read more about `.env` files [here](https://github.com/motdotla/dotenv#readme).
+The production build of your application, located in the `dist` directory by default, can be manually deployed to a page in a Loki OS application by running `npm run loki` from the command line. In order to properly deploy your code, you must specify an `.env` file. All varibles beginning in `VITE_` will be exposed as `import.meta.env.VITE_` to your client source code according to the Vite API at [Env Variables and Modes](https://vitejs.dev/guide/env-and-mode.html#env-files). Deploying to Loki requires providing access to valid Loki credentials via environment variables. Read more about `.env` files [here](https://github.com/motdotla/dotenv#readme). Also note that the env variables in your GitHub actions definition need to match the .env file. See `.github/workflows/node.js.yml`
 
 ```
 .env
