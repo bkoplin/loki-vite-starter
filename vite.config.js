@@ -14,6 +14,7 @@ const projectRootDir = path.resolve(__dirname);
 
 const indexHTML = path.resolve(projectRootDir, "index.html");
 const srcDir = path.resolve(projectRootDir, "src");
+const localLoki = path.resolve(__dirname, "src/loki/index.js");
 
 const {
   LOKI_PASSWORD,
@@ -70,6 +71,10 @@ const baseConfig = {
   },
   build: {
     rollupOptions: {
+      external: [localLoki], // see https://rollupjs.org/guide/en/#external
+      output: {
+        globals: { [localLoki]: "loki" }, // see https://rollupjs.org/guide/en/#outputglobals for pattern
+      },
       input: {
         main: indexHTML,
       },

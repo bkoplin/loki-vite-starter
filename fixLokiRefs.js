@@ -29,8 +29,8 @@ function fixLokiRefs(pageName, pageUrn) {
       bundleNames.push("favicon.ico");
       // eslint-disable-next-line no-use-before-define
       const n = bundleNames
-        .reduce((r, b) => renameResources(r, b, pageUrn), html);
-        // .replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n<#include "urn:com:reedsmith:delorean:app:pages:htmlHeadLokiOnly">');
+        .reduce((r, b) => renameResources(r, b, pageUrn), html)
+        .replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n<#include "urn:com:reedsmith:delorean:app:pages:htmlHeadLokiOnly">');
       /** @type {import('vite').HtmlTagDescriptor[]} */
       const tags = [{
         tag: "title",
