@@ -1,6 +1,6 @@
 // @ts-check
 /* eslint-disable no-console, no-loop-func, max-len */
-require('dotenv').config({path: "./.env"});
+require('dotenv').config();
 const axios = require('axios').default;
 const fs = require("fs");
 const grayMatter = require("gray-matter");

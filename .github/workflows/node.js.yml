@@ -30,16 +30,16 @@ jobs:
         LOKI_USERNAME: ${{ secrets.LOKI_USERNAME }}
         LOKI_PASSWORD: ${{ secrets.LOKI_PASSWORD }}
         LOKI_USER_URN: ${{ secrets.LOKI_USER_URN }}
-        VITE_CLOUD_CODE_NAME: 'reedsmith'
-        VITE_APP_CODE_NAME: 'delorean'
-        VITE_PAGE_NAME: 'Relativity Import Manager'
-        VITE_PAGE_CODE_NAME: 'relativityImportManager'
+        VITE_CLOUD_CODE_NAME: ${{ secrets.VITE_CLOUD_CODE_NAME}}
+        VITE_APP_CODE_NAME: ${{ secrets.VITE_APP_CODE_NAME }}
+        VITE_PAGE_NAME: ${{ secrets.VITE_PAGE_NAME }}
+        VITE_PAGE_CODE_NAME: ${{ secrets.VITE_PAGE_CODE_NAME }}
     - run: npm run loki --if-present
       env: 
         LOKI_USERNAME: ${{ secrets.LOKI_USERNAME }}
         LOKI_PASSWORD: ${{ secrets.LOKI_PASSWORD }}
         LOKI_USER_URN: ${{ secrets.LOKI_USER_URN }}
-        VITE_CLOUD_CODE_NAME: 'reedsmith'
-        VITE_APP_CODE_NAME: 'delorean'
-        VITE_PAGE_NAME: 'Relativity Import Manager'
-        VITE_PAGE_CODE_NAME: 'relativityImportManager'
+        VITE_CLOUD_CODE_NAME: ${{ secrets.VITE_CLOUD_CODE_NAME}}
+        VITE_APP_CODE_NAME: ${{ secrets.VITE_APP_CODE_NAME }}
+        VITE_PAGE_NAME: ${{ secrets.VITE_PAGE_NAME }}
+        VITE_PAGE_CODE_NAME: ${{ secrets.VITE_PAGE_CODE_NAME }}
