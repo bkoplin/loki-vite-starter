@@ -9,15 +9,47 @@ name: Deploy to Loki
 #     branches: [ main ]
 
 jobs:
-  build:
-
+  makeEnv:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        node-version: [15.x]
+    outputs:
+      VITE_CLOUD_CODE_NAME: ${{ steps.dotenv.outputs.VITE_CLOUD_CODE_NAME}}
+      VITE_APP_CODE_NAME: ${{ steps.dotenv.outputs.VITE_APP_CODE_NAME }}
+      VITE_PAGE_NAME: ${{ steps.dotenv.outputs.VITE_PAGE_NAME }}
+      VITE_PAGE_CODE_NAME: ${{ steps.dotenv.outputs.VITE_PAGE_CODE_NAME }}        
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Get .env.production variables
+        id: dotenv
+        # You may pin to the exact commit or the version.
+        # uses: falti/dotenv-action@cb77e3cb51b636f6833ceeb6928bf06ff66e82fa
+        uses: falti/dotenv-action@v0.2.5
+        with:
+          # the path to the .env file (including file name)
+          path: .env.production # default is .env
+          # whether to log the variables to output or not
+          log-variables: true # optional, default is false
+  build:
+    needs: makeEnv
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [15.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    env:
+      LOKI_USERNAME: ${{ secrets.LOKI_USERNAME }}
+      LOKI_PASSWORD: ${{ secrets.LOKI_PASSWORD }}
+      LOKI_USER_URN: ${{ secrets.LOKI_USER_URN }}
+      VITE_CLOUD_CODE_NAME: ${{ needs.makeEnv.outputs.VITE_CLOUD_CODE_NAME}}
+      VITE_APP_CODE_NAME: ${{ needs.makeEnv.outputs.VITE_APP_CODE_NAME }}
+      VITE_PAGE_NAME: ${{ needs.makeEnv.outputs.VITE_PAGE_NAME }}
+      VITE_PAGE_CODE_NAME: ${{ needs.makeEnv.outputs.VITE_PAGE_CODE_NAME }}   
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -26,20 +58,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - run: npm run build --if-present
-      env:
-        LOKI_USERNAME: ${{ secrets.LOKI_USERNAME }}
-        LOKI_PASSWORD: ${{ secrets.LOKI_PASSWORD }}
-        LOKI_USER_URN: ${{ secrets.LOKI_USER_URN }}
-        VITE_CLOUD_CODE_NAME: ${{ secrets.VITE_CLOUD_CODE_NAME}}
-        VITE_APP_CODE_NAME: ${{ secrets.VITE_APP_CODE_NAME }}
-        VITE_PAGE_NAME: ${{ secrets.VITE_PAGE_NAME }}
-        VITE_PAGE_CODE_NAME: ${{ secrets.VITE_PAGE_CODE_NAME }}
     - run: npm run loki --if-present
-      env: 
-        LOKI_USERNAME: ${{ secrets.LOKI_USERNAME }}
-        LOKI_PASSWORD: ${{ secrets.LOKI_PASSWORD }}
-        LOKI_USER_URN: ${{ secrets.LOKI_USER_URN }}
-        VITE_CLOUD_CODE_NAME: ${{ secrets.VITE_CLOUD_CODE_NAME}}
-        VITE_APP_CODE_NAME: ${{ secrets.VITE_APP_CODE_NAME }}
-        VITE_PAGE_NAME: ${{ secrets.VITE_PAGE_NAME }}
-        VITE_PAGE_CODE_NAME: ${{ secrets.VITE_PAGE_CODE_NAME }}

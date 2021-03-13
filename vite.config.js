@@ -1,108 +1,115 @@
 // @ts-check
-/* eslint-disable import/no-extraneous-dependencies, no-unused-vars, import/first */
+/* eslint-disable no-unused-vars, no-process-env */
 
 import dotEnv from "dotenv";
 
 dotEnv.config();
+dotEnv.config({path: `./.env.${process.env.NODE_ENV}`});
 
-import vue from "@vitejs/plugin-vue";
+import components from "vite-plugin-components";
 import path from "path";
-import Components from "vite-plugin-components";
+import vue from "@vitejs/plugin-vue";
 
-import { fixLokiRefs } from "./fixLokiRefs";
+import {fixLokiRefs} from "./fixLokiRefs";
 
 const projectRootDir = path.resolve(__dirname);
-
-const indexHTML = path.resolve(projectRootDir, "index.html");
-const srcDir = path.resolve(projectRootDir, "src");
-const localLoki = path.resolve(__dirname, "src/loki/index.js");
-
-const {
-  LOKI_PASSWORD,
-  VITE_CLOUD_CODE_NAME,
-  LOKI_USERNAME,
-  VITE_APP_CODE_NAME_TEST,
-  VITE_APP_CODE_NAME,
-  VITE_PAGE_CODE_NAME,
-  VITE_PAGE_NAME,
-} = process.env;
-
-const pageUrn = `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}`;
-// const { VITE_APP_CODE_NAME } = dev;
-
+const indexHTML = path.resolve(
+    projectRootDir,
+    "index.html"
+);
+const srcDir = path.resolve(
+    projectRootDir,
+    "src"
+);
+const localLoki = path.resolve(
+    __dirname,
+    "src/loki/index.js"
+);
+const pageUrn = `urn:com:${process.env.VITE_CLOUD_CODE_NAME}:${process.env.VITE_APP_CODE_NAME}:app:pages:${process.env.VITE_PAGE_CODE_NAME}`;
+// const { process.env.VITE_APP_CODE_NAME } = dev;
 /**
  * @type {import('vite').UserConfig}
  */
 const baseConfig = {
-  root: "./",
-  base: "./",
-  plugins: [
-    fixLokiRefs(VITE_PAGE_NAME, pageUrn),
-    vue(),
-    Components({
-      dirs: [
-        "src",
-        "node_modules/primevue",
-      ],
-    }),
-  ],
-  resolve: {
-    alias: [
-      {
-        find: "src",
-        replacement: srcDir,
-      },
-      {
-        find: "deps",
-        replacement: path.resolve(projectRootDir, "node_modules"),
-      },
-      {
-        find: "@",
-        replacement: path.resolve(srcDir, "components"),
-      },
-    ],
-    extensions: [
-      ".mjs",
-      ".js",
-      ".jsx",
-      ".json",
-      ".sass",
-      ".scss",
-    ],
-  },
-  build: {
-    rollupOptions: {
-      external: [localLoki], // see https://rollupjs.org/guide/en/#external
-      output: {
-        format: "iife",
-        name: VITE_PAGE_CODE_NAME,
-        globals: { [localLoki]: "loki" }, // see https://rollupjs.org/guide/en/#outputglobals for pattern
-      },
-      input: {
-        main: indexHTML,
-      },
+    base: "./",
+    build: {
+        rollupOptions: {
+            external: [localLoki], // see https://rollupjs.org/guide/en/#external
+            output: {
+                format: "iife",
+                name: process.env.VITE_PAGE_CODE_NAME,
+                globals: {[localLoki]: "loki"}, // see https://rollupjs.org/guide/en/#outputglobals for pattern
+            },
+            input: {main: indexHTML},
+        },
+        // manifest: true,
+        outDir: "dist",
+        assetsDir: "./",
     },
-    // manifest: true,
-    outDir: "dist",
-    assetsDir: "./",
-  },
-  server: {
-    https: false,
-    cors: true,
-    proxy: {
-      "^.*loki.web.serviceUrlPrefix.*query": {
-        changeOrigin: true,
-        target: `https://${VITE_CLOUD_CODE_NAME}.saplingdata.com/${VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`,
-        auth: `${LOKI_USERNAME}:${LOKI_PASSWORD}`,
-      },
+    plugins: [
+        components({
+            dirs: [
+                "src",
+                "node_modules/primevue",
+            ],
+        }),
+        fixLokiRefs(
+            process.env.VITE_PAGE_NAME,
+            pageUrn
+        ),
+        vue(),
+
+    ],
+    resolve: {
+        alias: [
+            {
+                find: "src",
+                replacement: srcDir,
+            },
+            {
+                find: "deps",
+                replacement: path.resolve(
+                    projectRootDir,
+                    "node_modules"
+                ),
+            },
+            {
+                find: "@",
+                replacement: path.resolve(
+                    srcDir,
+                    "components"
+                ),
+            },
+        ],
+        extensions: [
+            ".mjs",
+            ".js",
+            ".jsx",
+            ".json",
+            ".sass",
+            ".scss",
+        ],
     },
-  },
+    root: "./",
+
+    server: {
+        cors: true,
+        https: false,
+        proxy: {
+            "^.*loki.web.serviceUrlPrefix.*query": {
+                auth: `${process.env.LOKI_USERNAME}:${process.env.LOKI_PASSWORD}`,
+                changeOrigin: true,
+                target: `https://${process.env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${process.env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`,
+            },
+        },
+    },
 };
 
 /** @type{import('vite').UserConfigFn} */
-export default ({ command, mode }) => {
-  if (command === "serve" || mode === "development") {
+export default ({command, mode}) => {
+    if (command === "serve" || mode === "development") {
+        return baseConfig;
+    }
+
     return baseConfig;
-  }
-  return baseConfig;
 };
