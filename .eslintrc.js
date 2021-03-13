@@ -190,7 +190,7 @@ module.exports = {
         "no-unneeded-ternary": "error",
         "no-unreachable-loop": "error",
         "no-unused-expressions": "error",
-        "no-use-before-define": "error",
+        "no-use-before-define": ["error", {functions: false}],
         "no-useless-backreference": "error",
         "no-useless-call": "error",
         "no-useless-computed-key": "error",
