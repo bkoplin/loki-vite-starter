@@ -62,11 +62,11 @@ const resourceUrl = [
     "v",
 ].join("/");
 const lokiSession = axios.create({
-    baseURL,
     auth: {
-        username: LOKI_USERNAME,
         password: LOKI_PASSWORD,
+        username: LOKI_USERNAME,
     },
+    baseURL,
 });
 const pushToLoki = async () => {
     const pageDataObject = pageData();
@@ -87,20 +87,19 @@ const pushToLoki = async () => {
         });
     }
 
-    await lokiSession.post(
-        pageDataUploadUrl,
-        pageDataObject
-    ).then(() => {
-        console.log(`Loki data for "${pageDataObject.name}" saved to ${pageDataObject.urn} (${pageDataUploadUrl})`);
-    });
+    await postPageData(pageDataObject);
+    uploadBuildFiles(distFiles);
+};
+
+function uploadBuildFiles (distFiles) {
     distFiles.forEach((file) => {
         const filePath = `./dist/${file}`;
 
         fs.readFile(
             filePath,
             "utf8",
-            (err, data) => {
-            // const baseFileName = file;
+            (_err, data) => {
+                // const baseFileName = file;
                 const baseFileName = file.replace(
                     `${VITE_PAGE_CODE_NAME}!`,
                     ""
@@ -119,7 +118,16 @@ const pushToLoki = async () => {
             }
         );
     });
-};
+}
+
+async function postPageData (pageDataObject) {
+    await lokiSession.post(
+        pageDataUploadUrl,
+        pageDataObject
+    ).then(() => {
+        console.log(`Loki data for "${pageDataObject.name}" saved to ${pageDataObject.urn} (${pageDataUploadUrl})`);
+    });
+}
 
 function getCurrentFiles () {
     return lokiSession.
