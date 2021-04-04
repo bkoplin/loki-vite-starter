@@ -3,13 +3,38 @@
   "extends": "@tsconfig/node12/tsconfig.json",
   "include": ["src/**.*"],
   "compilerOptions": {
-    "lib": ["DOM", "esnext"],
+    "baseUrl": ".",
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ],
     "outDir": "./dist",
     "allowJs": true,
+    "strict": true,
     "resolveJsonModule": true,
     "module": "esnext",
+    "target": "es5",
+    "sourceMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "importHelpers": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": [
+          "src/components/*"
+      ],
+      "store/*": [
+          "src/store/*"
+      ],
+      "src/*": [
+          "src/*"
+      ]
+  }
   }
 }

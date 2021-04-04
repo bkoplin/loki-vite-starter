@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
     <HelloWorld msg="Welcome to your Loki Vue 3 + Vite Starter!" />
     <button class="inline-flex items-center px-2.5 py-1.5 mt-3 border
       border-transparent text-xs font-medium rounded shadow-sm text-white
@@ -24,10 +24,3 @@ export default {
 };
 </script>
 
-<style>
-@import url("./main.css");
-
-#app {
-  @apply container mx-auto py-8 gap-4;
-}
-</style>

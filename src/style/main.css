@@ -1,0 +1,25 @@
+@tailwind base;
+@layer base {
+  #app {
+    @apply gap-4 grid grid-cols-3 container;
+  }
+
+  .p-tree-container {
+      @apply h-full;
+  }
+
+  .pi {
+    @apply text-sm;
+  }
+
+  .p-component {
+    @apply leading-tight text-sm;
+  }
+}
+@tailwind components;
+@tailwind utilities;
+@tailwind screens;
+
+html {
+  font-size: 14px;
+}

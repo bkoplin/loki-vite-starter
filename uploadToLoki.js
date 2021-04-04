@@ -1,11 +1,14 @@
 // @ts-check
-/* eslint-disable no-console, no-loop-func, max-len */
+/* eslint-disable no-console, no-loop-func, max-len, max-lines-per-function, max-statements, max-lines */
 require("dotenv").config();
 require("dotenv").config({path: "./.env.production"});
 const axios = require("axios").default;
 const fs = require("fs");
 const grayMatter = require("gray-matter");
+const _ = require("lodash");
 const path = require("path");
+const babel = require("@babel/core");
+const klawSync = require("klaw-sync");
 const {
     LOKI_USERNAME,
     LOKI_PASSWORD,
@@ -21,6 +24,7 @@ const resourceApi = "urn/com/loki/core/model/api/resource";
 const listApi = "urn/com/loki/core/model/api/list";
 const pageView = "urn/com/loki/modeler/model/types/combinedPageExt";
 const queryView = "urn/com/loki/modeler/model/types/queryExt";
+const webserviceView = "urn/com/loki/modeler/model/types/webServiceExt";
 const thisPagePath = [
     "urn/com",
     VITE_CLOUD_CODE_NAME,
@@ -56,25 +60,46 @@ const queryUploadUrl = [
     "model/queries",
     VITE_PAGE_CODE_NAME,
 ].join("/");
+const webServiceUploadUrl = [
+    apiPath,
+    webserviceView,
+    "v",
+    "urn/com",
+    VITE_CLOUD_CODE_NAME,
+    VITE_APP_CODE_NAME,
+    "model/webServices",
+].join("/");
 const resourceUrl = [
     apiPath,
     resourceApi,
     "v",
 ].join("/");
 const lokiSession = axios.create({
-    auth: {
-        password: LOKI_PASSWORD,
-        username: LOKI_USERNAME,
-    },
     baseURL,
+    auth: {
+        username: LOKI_USERNAME,
+        password: LOKI_PASSWORD,
+    },
 });
+const distDir = "./dist";
+const queryDir = "./src/queries";
+const webServiceDir = "./src/webServices";
 const pushToLoki = async () => {
     const pageDataObject = pageData();
-    const distFiles = fs.readdirSync("./dist");
-    const queryDir = "./src/queries";
+    const distFiles = fs.readdirSync(distDir);
     const queryFiles = fs.
         readdirSync(queryDir).
         filter((p) => p.endsWith(".sql") || p.endsWith(".SQL"));
+    const webServiceFiles = klawSync(
+        webServiceDir,
+        {
+            filter: (item) => [
+                ".js",
+                ".JS",
+            ].includes(path.parse(item.path).ext),
+            nodir: true,
+        }
+    ).map((item) => item.path);
 
     if (queryFiles.length) {
         const queryData = getQueryData();
@@ -86,12 +111,16 @@ const pushToLoki = async () => {
             console.log(`Query "${queryData.name}" uploaded to ${queryData.urn}`);
         });
     }
+    if (webServiceFiles.length) {
+        webServiceFiles.forEach(uploadWebservice);
+    }
 
-    await postPageData(pageDataObject);
-    uploadBuildFiles(distFiles);
-};
-
-function uploadBuildFiles (distFiles) {
+    await lokiSession.post(
+        pageDataUploadUrl,
+        pageDataObject
+    ).then(() => {
+        console.log(`Loki data for "${pageDataObject.name}" saved to ${pageDataObject.urn} (${pageDataUploadUrl})`);
+    });
     distFiles.forEach((file) => {
         const filePath = `./dist/${file}`;
 
@@ -99,7 +128,7 @@ function uploadBuildFiles (distFiles) {
             filePath,
             "utf8",
             (_err, data) => {
-                // const baseFileName = file;
+            // const baseFileName = file;
                 const baseFileName = file.replace(
                     `${VITE_PAGE_CODE_NAME}!`,
                     ""
@@ -118,15 +147,54 @@ function uploadBuildFiles (distFiles) {
             }
         );
     });
-}
+};
 
-async function postPageData (pageDataObject) {
-    await lokiSession.post(
-        pageDataUploadUrl,
-        pageDataObject
-    ).then(() => {
-        console.log(`Loki data for "${pageDataObject.name}" saved to ${pageDataObject.urn} (${pageDataUploadUrl})`);
-    });
+async function uploadWebservice (webserviceFilePath) {
+    const {name, ext} = path.parse(webserviceFilePath);
+    const webserviceData = getWebserviceData(name);
+    const filename = `${name}${ext}`;
+    const dataUploadUrl = `${webServiceUploadUrl}/${name}`;
+    const codeUploadUrl = `${resourceUrl}/${webserviceData.urn.replace(
+        ":",
+        "/"
+    )}!${filename}`;
+    const babelOptions = {
+        babelrc: false,
+        configFile: false,
+        filename,
+        presets: [
+            [
+                "@babel/preset-env",
+                {
+                    loose: true,
+                    modules: false,
+                },
+            ],
+        ],
+    };
+    const {code} = await babel.transformAsync(
+        fs.readFileSync(
+            webserviceFilePath,
+            "utf8"
+        ),
+        babelOptions
+    );
+
+    await lokiSession.
+        post(
+            dataUploadUrl,
+            webserviceData
+        );
+    console.log(`Web service "${name}" uploaded to ${webserviceData.urn}`);
+
+    await lokiSession.
+        post(
+            codeUploadUrl,
+            code,
+            {headers: {"Content-Type": "text/javascript"}}
+        ).
+        catch((e) => console.log(e));
+    console.log(`${filename} uploaded to ${codeUploadUrl}`);
 }
 
 function getCurrentFiles () {
@@ -152,7 +220,6 @@ async function deleteCurrentFiles (files) {
         );
 
         // eslint-disable-next-line no-await-in-loop
-
         await lokiSession.
             delete(deleteUrl).
             then(() => {
@@ -191,8 +258,7 @@ function pageData () {
         description: null,
         descriptionHtml: null,
         serviceOutput: {
-            outputContentTypeUrn:
-                "urn:com:loki:meta:data:mediaTypes:text%2Fhtml",
+            outputContentTypeUrn: "urn:com:loki:meta:data:mediaTypes:text%2Fhtml",
             oldContentType: "urn:com:loki:meta:data:mediaTypes:text%2Fhtml",
             maxAge: "0",
         },
@@ -200,7 +266,7 @@ function pageData () {
             {
                 operation: "urn:com:loki:core:model:operations:webService",
                 method:
-                    "urn:com:loki:core:model:operations:webService:methods:freemarkerPage",
+          "urn:com:loki:core:model:operations:webService:methods:freemarkerPage",
                 pageTemplate: `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}!index.html`,
                 securityFunctionGroups: [],
                 actionImpls: [
@@ -212,8 +278,7 @@ function pageData () {
             },
             {
                 operation: "urn:com:loki:core:model:operations:render",
-                method:
-                    "urn:com:loki:freemarker:model:methods:freemarkerRender",
+                method: "urn:com:loki:freemarker:model:methods:freemarkerRender",
                 pageTemplate: `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}!index.html`,
                 securityFunctionGroups: [],
                 actionImpls: [],
@@ -238,15 +303,13 @@ function pageData () {
  */
 function getQueryData () {
     const queryUrn = `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:model:queries:${VITE_PAGE_CODE_NAME}`;
-    const srcDir = "./src/queries";
     const childQueries = [];
 
-    fs.
-        readdirSync(srcDir).
+    fs.readdirSync(queryDir).
         filter((p) => p.endsWith(".sql") || p.endsWith(".SQL")).
         map((p) => fs.readFileSync(
             path.resolve(
-                srcDir,
+                queryDir,
                 p
             ),
             "utf8"
@@ -278,7 +341,9 @@ function getQueryData () {
                 const paramNames = Object.keys(data.queryParams);
 
                 paramNames.forEach((k) => {
-                    if (!data.queryParams[k].startsWith("urn:com:loki:core:model:types:")) {
+                    if (
+                        !data.queryParams[k].startsWith("urn:com:loki:core:model:types:")
+                    ) {
                         throw Error("You must specify the loki type for the parameter");
                     }
                     queryObject.queryParams.push({
@@ -291,15 +356,52 @@ function getQueryData () {
         });
 
     return {
-        urn: queryUrn,
-        name: `"${VITE_PAGE_NAME}" Queries`,
-        queryString: "",
-        summary: `Queries necessary to run page ${VITE_PAGE_NAME} at\n\nurn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}`,
-        securityFunctionUrns: [`urn:com:reedsmith:${VITE_APP_CODE_NAME}:model:functions:generalAccess`],
         childQueries,
         inactive: false,
-        lastEditDate: new Date().toISOString(),
         lastEditByUrn: LOKI_USER_URN,
+        lastEditDate: new Date().toISOString(),
+        name: `"${VITE_PAGE_NAME}" Queries`,
+        queryString: "",
+        securityFunctionUrns: [`urn:com:reedsmith:${VITE_APP_CODE_NAME}:model:functions:generalAccess`],
+        summary: `Queries necessary to run page ${VITE_PAGE_NAME} at\n\nurn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}`,
+        urn: queryUrn,
+    };
+}
+
+/**
+ * @returns {import("./types").WebserviceDataObject} A data object defining the query to save in AppBuilder
+ */
+function getWebserviceData (fileName) {
+    const webserviceUrn = `urn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:model:webServices:${fileName}`;
+
+    return {
+        boundToEntityTypeUrn: null,
+        description: "",
+        entityTypeUrns: [
+            "urn:com:loki:meta:model:types:webService",
+            "urn:com:loki:meta:model:types:service",
+        ],
+        inactive: false,
+        lastEditByUrn: "urn:com:reedsmith:domain:security:users:benKoplin",
+        lastEditDate: new Date().toISOString(),
+        name: `${VITE_PAGE_NAME} ${_.upperCase(fileName)} webservice`,
+        operationImpls: [
+            {
+                actionImpls: [
+                    {
+                        action: "urn:com:loki:core:model:actions:get",
+                        securityFunctionGroups: [`urn:com:reedsmith:${VITE_APP_CODE_NAME}:model:functions:generalAccess`],
+                    },
+                ],
+                executionScriptUrn: `${webserviceUrn}!${fileName}.js`,
+                method: "urn:com:loki:js:model:methods:javaScriptWebService",
+                operation: "urn:com:loki:core:model:operations:webService",
+                securityFunctionGroups: [`urn:com:reedsmith:${VITE_APP_CODE_NAME}:model:functions:generalAccess`],
+            },
+        ],
+        purposeUrns: ["urn:com:loki:core:data:servicePurposeSet#webServiceApi"],
+        summary: `Webservice for ${VITE_PAGE_NAME} page operations`,
+        urn: webserviceUrn,
     };
 }
 
