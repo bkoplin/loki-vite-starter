@@ -59,6 +59,7 @@ VITE_CLOUD_CODE_NAME_TEST   # The code name of the development environment app (
 VITE_APP_CODE_NAME          # The code name of the app to which the code will be deployed
 VITE_PAGE_NAME              # The name of the page (the <title> block)
 VITE_PAGE_CODE_NAME         # The code name of the page
+VITE_PG_DATASPACE           # The urn of the default dataspace for the app
 ```
 
 Please make sure you update this information correctly, since it will be used to construct the API endpoints for deploying your code. It is recommended to set up a page in Loki’s App Builder (along with an appropriate security model) for your Vue app to deploy to **before** configuring your Vue app.
