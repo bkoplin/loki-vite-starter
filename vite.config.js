@@ -1,19 +1,17 @@
 // @ts-check
-/* eslint-disable padding-line-between-statements,no-unused-vars, no-process-env */
-
-import dotEnv from "dotenv";
-dotEnv.config();
-
 /**
  *
- * @typedef {import("./types").ThisEnv} ThisEnv
+ * @typedef {import("./src/shims-vite").ThisEnv} ThisEnv
  *
  */
 
 /** @type {ThisEnv} */
-// @ts-expect-error
+
+import dotEnv from "dotenv";
+dotEnv.config();
+
 const {env} = process;
-console.log(env)
+
 import path from "path";
 import vue from "@vitejs/plugin-vue";
 import components from "vite-plugin-components";
@@ -24,11 +22,12 @@ import {makeLokiData} from "./plugins/makeLokiData";
 import {uploadToLoki} from "./plugins/uploadToLoki";
 
 const projectRootDir = process.cwd();
-const indexHTML = path.resolve(projectRootDir, "index.html");
 const srcDir = path.resolve(projectRootDir, "src");
 const localLoki = path.resolve(__dirname, "src/loki/index.js");
+const lokiAuth = `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`;
 
 /** @type{import('vite').UserConfig} */
+
 export default {
     base: "./",
     publicDir: "./public",
@@ -71,25 +70,29 @@ export default {
         cors: true,
         https: false,
         proxy: {
-            "^.*loki.web.serviceUrlPrefix.*/query/": {
-                auth: `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`,
-                changeOrigin: true,
-                target: `https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`,
-            },
-            "^.+urn:com:loki:meta:model:types:webService.+": {
-                auth: `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`,
-                changeOrigin: true,
-                rewrite: (p) => p.replace(
+            "^.*loki.web.serviceUrlPrefix.*/query/": makeProxyOpts(`https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`),
+            "^.+urn:com:loki:meta:model:types:webService.+": makeProxyOpts(
+                `https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api`,
+                (/** @type {string} */ p) => p.replace(
                     "$%7Bloki.web.serviceUrlPrefix(%22urn:com:loki:meta:model:types:webService%22)%7D",
                     ""
-                ),
-                target: `https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api`,
-            },
-            "^delorean-AppBuilder/api.+": {
-                auth: `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`,
-                changeOrigin: true,
-                target: `https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}-AppBuilder/api`,
-            },
+                )
+            ),
+            [`^${env.VITE_APP_CODE_NAME}-AppBuilder/api.+`]: makeProxyOpts(`https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}-AppBuilder/api`),
         },
     },
 };
+
+/**
+ * @param {string} target
+ * @param {(arg: string) => string} [rewrite]
+ * @returns {import("vite").ProxyOptions}
+ */
+function makeProxyOpts (target, rewrite = (v) => v) {
+    return {
+        auth: lokiAuth,
+        changeOrigin: true,
+        rewrite,
+        target,
+    };
+}

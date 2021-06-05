@@ -55,8 +55,8 @@ LOKI_USERNAME               # Loki username
 LOKI_PASSWORD               # Loki password
 LOKI_USER_URN               # Full loki user URN (for saving uploaded data)
 VITE_CLOUD_CODE_NAME        # The URN segment identifying the Loki app that you plan to deploy to (the last segment of loki.app.rootUrn)
-VITE_CLOUD_CODE_NAME_TEST   # The code name of the development environment app (used with server in vite.config.js)
-VITE_APP_CODE_NAME          # The code name of the app to which the code will be deployed
+VITE_APP_CODE_NAME_TEST   # The code name of the development environment app (used with server in vite.config.js) – essentially, the code name of the Loki environment in which the app would be viewed
+VITE_APP_CODE_NAME          # The code name of the app to which the compiled code will be deployed
 VITE_PAGE_NAME              # The name of the page (the <title> block)
 VITE_PAGE_CODE_NAME         # The code name of the page
 VITE_PG_DATASPACE           # The urn of the default dataspace for the app

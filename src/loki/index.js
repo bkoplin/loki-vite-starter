@@ -1,9 +1,6 @@
-// @ts-check
-/* eslint-disable no-template-curly-in-string */
-
+/* eslint-disable */
 /**
  * A Loki JavaScript utility providing various functions for loki data and services
- * @module lokiJs
  * available at urn:com:loki:js:app:pages:lokiJs!loki.js and urn:com:loki:jquery:app:pages:lokiJQuery!lokiJQuery.js
  */
 
@@ -12,16 +9,7 @@
 // <#assign end = "/"+"*">
 //
 
-/**
- * The global variable 'loki' is the main javaScript entry point for loki javaScript functionality
- * @typedef {{[index: string]: object|function|string;}} lokiJs
- * @property {object} data a set of utilities for getting and saving loki data
- * @property {object} web a set of utilities for dealing with urls and the web
- * @property {object} user a set of utilities for dealing with user login
- * @property {object} urn a set of utilities for dealing with urns
- */
 
-/** @type {lokiJs} */
 import axios from "axios";
 import {isArray} from "lodash-es";
 const loki = {};
@@ -66,31 +54,19 @@ loki.web = {
             const cLoc = urn.lastIndexOf(":");
             const pLoc = urn.lastIndexOf(".");
 
-            urn = urn.replace(
-                /#/g,
-                "%23"
-            );
-            urn = urn.replace(
-                /:/g,
-                "/"
-            );
+            urn = urn.replace(/#/g, "%23");
+            urn = urn.replace(/:/g, "/");
 
             if (hashLoc != -1) {
                 // contained entities are unambiguous so no work is needed here
             } else if (exLoc == -1 && pLoc > cLoc) {
                 // urn is an entity urn with a "." in the last segment
                 // explicity add back a ":" to make sure loki doesn't think this is a resource.
-                urn = `${urn.substring(
-                    0,
-                    cLoc
-                )}:${urn.substring(cLoc + 1)}`;
+                urn = `${urn.substring(0, cLoc)}:${urn.substring(cLoc + 1)}`;
             } else if (exLoc != -1 && pLoc < exLoc) {
                 // urn is an resource urn with no "." in the last segment
                 // explicity add back a "!" to make sure loki doesn't think this is an entity.
-                urn = `${urn.substring(
-                    0,
-                    cLoc
-                )}:${urn.substring(cLoc + 1)}`;
+                urn = `${urn.substring(0, cLoc)}:${urn.substring(cLoc + 1)}`;
             }
 
             return urn;
@@ -106,10 +82,7 @@ loki.web = {
    */
     urnToUrlParams (urn) {
         if (urn !== null) {
-            return urn.replace(
-                /#/g,
-                "%23"
-            );
+            return urn.replace(/#/g, "%23");
         }
 
         return null;
@@ -177,10 +150,7 @@ loki.web = {
             options = {};
         }
         options.cacheCheck = true;
-        const url = loki.web.resourceUrl(
-            resourceUrn,
-            options
-        );
+        const url = loki.web.resourceUrl(resourceUrn, options);
 
         return url;
     },
@@ -281,10 +251,7 @@ loki.web = {
         }
         options.cacheCheck = true;
 
-        return loki.web.pageUrl(
-            pageUrn,
-            options
-        );
+        return loki.web.pageUrl(pageUrn, options);
     },
 
     /**
@@ -448,10 +415,7 @@ loki.web = {
 
             if (conn) {
                 newPrefix = conn.url;
-                if (newServiceUrn.slice(
-                    0,
-                    1
-                ) === ":") {
+                if (newServiceUrn.slice(0, 1) === ":") {
                     newServiceUrn = conn.rootUrn + newServiceUrn;
                 }
             }
@@ -460,10 +424,7 @@ loki.web = {
 
             if (conn) {
                 newPrefix = conn.url;
-                if (newServiceUrn.slice(
-                    0,
-                    1
-                ) === ":") {
+                if (newServiceUrn.slice(0, 1) === ":") {
                     newServiceUrn = conn.rootUrn + newServiceUrn;
                 }
             }
@@ -498,10 +459,7 @@ loki.web = {
 
         let url = `${newPrefix + serviceUrnPath}/v/${subjectUrnPath}`;
 
-        url = loki.web._appendParamsToUrl(
-            url,
-            queryParams
-        );
+        url = loki.web._appendParamsToUrl(url, queryParams);
 
         return url;
     },
@@ -534,8 +492,8 @@ loki.data = {
     // List all the children of the given urn
     //
     // @param {type} urn
-    // @param {type} callback
-    // @param {Object} options service options of format: {format:"json",beginIdx:0,numRequested:20,outputView:"urn:com:myView"}
+    // @param {type} [callback]
+    // @param {Object} [options] service options of format: {format:"json",beginIdx:0,numRequested:20,outputView:"urn:com:myView"}
     // @return {undefined}
     // @deprecated removed due to dependence on jquery
     //
@@ -581,28 +539,268 @@ loki.data = {
             jsonp: "jsoncallback",
             success (response) {
                 if (callback !== null && typeof callback === "function") {
-                    callback(
-                        null,
-                        response
-                    );
+                    callback(null, response);
                 }
             },
             error (response) {
                 if (callback !== null && typeof callback === "function") {
-                    callback(
-                        "Error getting children.",
-                        response
-                    );
+                    callback("Error getting children.", response);
                 }
             },
         };
 
-        axios.
-            get(url).
-            then((d) => ajaxOptions.success(d.data)).
-            catch((e) => ajaxOptions.error(e.response));
+        axios
+            .get(url)
+            .then((d) => ajaxOptions.success(d.data))
+            .catch((e) => ajaxOptions.error(e.response));
     // $.ajax(ajaxOptions);
     },
+    loadEntity (a, b, c) {
+        c = c || {};
+        c.format
+            ? c.queryParams = `format\x3d${c.format}`
+            : (c.queryParams = "format\x3djson",
+            c.format = "json");
+        c.dataSpaceUrn && (c.queryParams = `${c.queryParams}\x26dataSpaceUrn\x3d${c.dataSpaceUrn}`);
+        let d = null,
+            h = c.format;
+
+        c.jsonp && (d = "jsoncallback",
+        h = "jsonp");
+        c.format === "xml" && (h = "text");
+        a = loki.web.dataServiceUrl(a, b, c);
+        /** @type {JQueryAjaxSettings} */
+        const ajaxOptions = {
+            type: "GET",
+            url: a,
+            dataType: "jsonp",
+            jsonp: "jsoncallback",
+            success (response) {
+                if (callback !== null && typeof callback === "function") {
+                    callback(null, response);
+                }
+            },
+            error (response) {
+                if (callback !== null && typeof callback === "function") {
+                    callback("Error getting children.", response);
+                }
+            },
+        };
+
+        axios
+            .get(a)
+            .then((d) => ajaxOptions.success(d.data))
+            .catch((e) => ajaxOptions.error(e.response));
+    },
+    query (options, unused) {
+        if (typeof options === "string") {
+        // handle loki.data.query(queryUrn,options) in a backward compatible way
+            console.log("loki.data.query(queryUrn,options) is deprecated, please use loki.data.query(options) where one option is 'queryUrn'.");
+            unused.queryUrn = options;
+            options = unused;
+        }
+        options = options || {};
+        if (options.engine && !options.dataSpaceUrn) {
+            options.dataSpaceUrn = options.engine;
+            console.log("The options.query param is deprecated fro loki.data.query(). Use options.dataSpaceUrn instead.");
+        }
+    
+        let hasOutputView = false;
+    
+        if (options.outputView || options.outputViews) {
+            hasOutputView = true;
+        }
+    
+        let post;
+    
+        if (typeof options.post !== "undefined") {
+            post = options.post;
+        } else if (options.queryUrn) {
+            post = false; // default to GET when there is a queryUrn so that we have a easy to repeat url for the query
+        } else {
+            post = true; // default to POST for an adhoc query
+        }
+    
+        let jsonpCallback = null;
+        let dataType = "json";
+    
+        if (options.jsonp) {
+            jsonpCallback = "jsoncallback";
+            dataType = "jsonp"; // automatically adds callback param to url
+        }
+    
+        let {queryUrn} = options;
+    
+        if (queryUrn && options.connection) {
+            if (queryUrn.startsWith(":")) {
+                // use connection root if there is no root to the queryUrn
+                queryUrn = options.connection.rootUrn + queryUrn;
+            }
+        }
+    
+        let headers;
+    
+        if (options.useCurrentUserAuth && loki.user.getUserSessionKey) {
+            headers = {Authorization: `LOKISESSION ${loki.user.getUserSessionKey()}`};
+        }
+    
+        let url;
+        let promise;
+    
+        if (post) {
+        // POST
+            url = loki.web.webServiceUrl("urn:com:loki:core:model:api:query", {
+                subjectUrn: null,
+                queryParams: "",
+                serviceGroupUrn: options.serviceGroupUrn,
+                connection: options.connection,
+                urlPrefix: options.urlPrefix,
+            });
+            const postOpts = JSON.parse(JSON.stringify(options)); // make a copy
+    
+            postOpts.queryUrn = queryUrn;
+            delete postOpts.mapResults;
+            delete postOpts.post;
+            if (typeof postOpts.begin !== "undefined") {
+                postOpts.beginIdx = postOpts.begin; // the post json param is beginIdx for the web service
+                delete postOpts.begin;
+            }
+            if (typeof postOpts.num !== "undefined") {
+                postOpts.numRequested = postOpts.num; // the post json param is numRequested for the web service
+                delete postOpts.num;
+            }
+            const ajaxOptions = {
+                type: "POST",
+                url,
+                contentType: "application/json",
+                data: JSON.stringify(postOpts),
+                dataType,
+                jsonp: jsonpCallback,
+    
+                // beforeSend: function(xhr){loki.data._setHeaders(xhr,headers);},
+                headers,
+            };
+    
+            promise = axios.post(url, {data: postOpts}).then((d) => d.data);
+        // promise = $.ajax(ajaxOptions);
+        } else {
+        // GET
+            let params;
+    
+            if (queryUrn) {
+                params = `queryUrn=${loki.web.urnToUrlParams(queryUrn)}`;
+            } else if (options && !options.post) {
+                params = `query=${encodeURIComponent(options.query)}`;
+            }
+            if (options.format) {
+                params = `${params}&format=${options.format}`;
+            } else {
+                params = `${params}&format=json`; // default to json
+            }
+            if (options.beginIdx) {
+                params = `${params}&begin=${options.beginIdx}`;
+            }
+            if (options.begin) {
+                params = `${params}&begin=${options.begin}`;
+            }
+            if (options.numRequested) {
+                params = `${params}&num=${options.numRequested}`;
+            } else if (options.num) {
+                params = `${params}&num=${options.num}`;
+            }
+            if (options.dataSpaceUrn) {
+                params =
+            `${params
+            }&dataSpaceUrn=${
+                loki.web.urnToUrlParams(options.dataSpaceUrn)}`;
+            }
+            if (options.outputView) {
+                const outputView = loki.web.urnToUrlParams(options.outputView);
+    
+                params = `${params}&outputView=${outputView}`;
+            }
+    
+            let outputViewParam = "";
+    
+            if (options.outputView) {
+                outputViewParam =
+            `&outputView=${loki.web.urnToUrlParams(options.outputView)}`;
+            } else if (options.outputViews) {
+                for (var i in options.outputViews) {
+                    outputViewParam =
+              `${outputViewParam
+              }&outputView=${
+                  loki.web.urnToUrlParams(options.outputViews[i])}`;
+                }
+            }
+            params += outputViewParam;
+    
+            let paramParam = "";
+    
+            // Numbered parameters are p1, p2, p3, etc and can be multi valued arrays
+    
+            if (options.params) {
+                for (var i = 0; i < options.params.length; i++) {
+                    if (isArray(options.params[i])) {
+                        // This parameter is an array, repeat its values in the p{x} url parameter
+                        for (let j = 0; j < options.params[i].length; j++) {
+                            paramParam =
+                  `${paramParam
+                  }&p${
+                      i + 1
+                  }=${
+                      encodeURIComponent(options.params[i][j])}`;
+                        }
+                    } else {
+                        paramParam =
+                `${paramParam
+                }&p${
+                    i + 1
+                }=${
+                    encodeURIComponent(options.params[i])}`;
+                    }
+                }
+            }
+            // Named parameters are a name/value map and can have multi valued arrays
+            if (options.namedParams) {
+                paramParam += loki.data._addParams(options.namedParams, "p_");
+            }
+            // Expression parameters are a name/value map and can have multi valued arrays
+            if (options.expressionParams) {
+                paramParam += loki.data._addParams(options.expressionParams, "e_");
+            }
+            params += paramParam;
+    
+            url = loki.web.webServiceUrl("urn:com:loki:core:model:api:query", {
+                subjectUrn: null,
+                queryParams: params,
+                serviceGroupUrn: options.serviceGroupUrn,
+                connection: options.connection,
+                urlPrefix: options.urlPrefix,
+            });
+    
+            /** @type {JQueryAjaxSettings} */
+            const ajaxOptions = {
+                type: "GET",
+                url,
+                dataType,
+                jsonp: jsonpCallback,
+    
+                // beforeSend: function(xhr){loki.data._setHeaders(xhr,headers);},
+                headers,
+            };
+    
+            promise = axios.get(url).then((d) => d.data);
+        // promise = $.ajax(ajaxOptions);
+        }
+        promise = loki.data._handleJsonp(promise, options);
+    
+        if (options.mapResults) {
+            promise = promise.then((data) => loki.data._mapResultsFilter(data, hasOutputView));
+        }
+    
+        return promise;
+    }
 };
 
 /**
@@ -672,29 +870,20 @@ loki.user = {
                     loki._config.userUrn = response.userUrn;
                 }
                 if (callback !== null && typeof callback === "function") {
-                    callback(
-                        null,
-                        response
-                    );
+                    callback(null, response);
                 }
             },
             error (response) {
                 if (callback !== null && typeof callback === "function") {
-                    callback(
-                        "Error logging in.",
-                        response
-                    );
+                    callback("Error logging in.", response);
                 }
             },
         };
 
-        axios.
-            get(
-                url,
-                {data}
-            ).
-            then((d) => ajaxOptions.success(d.data)).
-            catch((e) => ajaxOptions.error(e.response));
+        axios
+            .get(url, {data})
+            .then((d) => ajaxOptions.success(d.data))
+            .catch((e) => ajaxOptions.error(e.response));
     // $.ajax(ajaxOptions);
     },
 
@@ -704,11 +893,7 @@ loki.user = {
    * @return {undefined}
    */
     logout (callback) {
-        loki.user.login(
-            null,
-            null,
-            callback
-        );
+        loki.user.login(null, null, callback);
     },
 
     // Returns the user's session key used to keep the user logged in.
@@ -720,22 +905,16 @@ loki.user = {
             const parts = value.split(`; ${name}=`);
 
             if (parts.length == 2) {
-                value = parts.
-                    pop().
-                    split(";").
-                    shift();
-                if (value.slice(
-                    0,
-                    1
-                ) === "\"") {
+                value = parts
+                    .pop()
+                    .split(";")
+                    .shift();
+                if (value.slice(0, 1) === "\"") {
                     value = value.substring(1);
                 }
                 if (value.slice(-1) === "\"") {
                     // endsWith
-                    value = value.substring(
-                        0,
-                        value.length - 1
-                    );
+                    value = value.substring(0, value.length - 1);
                 }
 
                 return value;
@@ -949,194 +1128,82 @@ loki._config = {
 loki.urlPrefixes = function (a, b, c, d, e, f) {
     console.log("loki.urlPrefixes() is deprecated, please use loki.web.urlPrefixes().");
 
-    return loki.web.urlPrefixes(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.urlPrefixes(a, b, c, d, e, f);
 };
 loki.getApiServicePrefix = function (a, b, c, d, e, f) {
     console.log("loki.getApiServicePrefix() is deprecated, please use loki.web.getApiServicePrefix().");
 
-    return loki.web.getApiServicePrefix(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.getApiServicePrefix(a, b, c, d, e, f);
 };
 loki.getPagesPrefix = function (a, b, c, d, e, f) {
     console.log("loki.getPagesPrefix() is deprecated, please use loki.web.getPagesPrefix().");
 
-    return loki.web.getPagesPrefix(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.getPagesPrefix(a, b, c, d, e, f);
 };
 loki.urnToUrlPath = function (a, b, c, d, e, f) {
     console.log("loki.urnToUrlPath() is deprecated, please use loki.web.urnToUrlPath().");
 
-    return loki.web.urnToUrlPath(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.urnToUrlPath(a, b, c, d, e, f);
 };
 loki.urnToUrlParams = function (a, b, c, d, e, f) {
     console.log("loki.urnToUrlParams() is deprecated, please use loki.web.urnToUrlParams().");
 
-    return loki.web.urnToUrlParams(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.urnToUrlParams(a, b, c, d, e, f);
 };
 loki.resourceUrl = function (a, b, c, d, e, f) {
     console.log("loki.resourceUrl() is deprecated, please use loki.web.resourceUrl().");
 
-    return loki.web.resourceUrl(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.resourceUrl(a, b, c, d, e, f);
 };
 loki.imageUrl = function (a, b, c, d, e, f) {
     console.log("loki.imageUrl() is deprecated, please use loki.web.imageUrl().");
 
-    return loki.web.imageUrl(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.imageUrl(a, b, c, d, e, f);
 };
 loki.pageUrl = function (a, b, c, d, e, f) {
     console.log("loki.pageUrl() is deprecated, please use loki.web.pageUrl().");
 
-    return loki.web.pageUrl(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.pageUrl(a, b, c, d, e, f);
 };
 loki.uploadUrl = function (a, b, c, d, e, f) {
     console.log("loki.uploadUrl() is deprecated, please use loki.web.uploadUrl().");
 
-    return loki.web.uploadUrl(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.uploadUrl(a, b, c, d, e, f);
 };
 loki.importUrl = function (a, b, c, d, e, f) {
     console.log("loki.importUrl() is deprecated, please use loki.web.importUrl().");
 
-    return loki.web.importUrl(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.importUrl(a, b, c, d, e, f);
 };
 loki.webServiceUrl = function (a, b, c, d, e, f) {
     console.log("loki.webServiceUrl() is deprecated, please use loki.web.webServiceUrl().");
 
-    return loki.web.webServiceUrl(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.web.webServiceUrl(a, b, c, d, e, f);
 };
 loki.list = function (a, b, c, d, e, f) {
     console.log("loki.list() is deprecated, please use loki.data.list().");
 
-    return loki.data.list(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.data.list(a, b, c, d, e, f);
 };
 loki.getKnownChildren = function (a, b, c, d, e, f) {
     console.log("loki.getKnownChildren() is deprecated, please use loki.data.list().");
 
-    return loki.data.list(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.data.list(a, b, c, d, e, f);
 };
 loki.login = function (a, b, c, d, e, f) {
     console.log("loki.login() is deprecated, please use loki.user.login().");
 
-    return loki.user.login(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.user.login(a, b, c, d, e, f);
 };
 loki.logout = function (a, b, c, d, e, f) {
     console.log("loki.logout() is deprecated, please use loki.user.logout().");
 
-    return loki.user.logout(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.user.logout(a, b, c, d, e, f);
 };
 loki.isNewUrn = function (a, b, c, d, e, f) {
     console.log("loki.isNewUrn() is deprecated, please use loki.urn.isNewUrn().");
 
-    return loki.urn.isNewUrn(
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
-    );
+    return loki.urn.isNewUrn(a, b, c, d, e, f);
 };
 loki.getUrnLastSegment = function (urn) {
     console.log("loki.getUrnLastSegment() is deprecated, please use loki.urn.getLastSegment().");
@@ -1201,11 +1268,7 @@ loki.data.loadEntity = function (urn, viewUrn, options) {
         dataType = "text";
     }
 
-    const url = loki.web.dataServiceUrl(
-        urn,
-        viewUrn,
-        options
-    );
+    const url = loki.web.dataServiceUrl(urn, viewUrn, options);
   /** @type {JQueryAjaxSettings} */
     const ajaxOptions = {
         type: "GET",
@@ -1255,26 +1318,15 @@ loki.data.saveEntity = function (urn, viewUrn, data, options) {
         dataType = "jsonp"; // automatically adds callback param to url
     }
 
-    const url = loki.web.dataServiceUrl(
-        urn,
-        viewUrn,
-        options
-    );
+    const url = loki.web.dataServiceUrl(urn, viewUrn, options);
   /** @type {JQueryAjaxSettings} */
     const ajaxOptions = {
         method: "POST",
         contentType: "application/json",
         url,
-        data: typeof data === "string"
-            ? data
-            : JSON.stringify(data),
-        dataType,
-        jsonp: jsonpCallback,
+        data,
     };
-    const promise = axios.get(
-        url,
-        {data}
-    ).then((d) => d.data);
+    const promise = axios(ajaxOptions).then((d) => d.data);
     // var promise = $.ajax(ajaxOptions);
     // promise = loki.data._handleJsonp(promise, options);
 
@@ -1303,10 +1355,7 @@ loki.data.deleteEntity = function (urn, options, unused1) {
         options = options || {};
     }
 
-    return loki.data.deleteItem(
-        urn,
-        options
-    );
+    return loki.data.deleteItem(urn, options);
 };
 
 // Delete the resource with the given urn
@@ -1322,10 +1371,7 @@ loki.data.deleteEntity = function (urn, options, unused1) {
 // @return {Promise}
 //
 loki.data.deleteResource = function (urn, options) {
-    return loki.data.deleteItem(
-        urn,
-        options
-    );
+    return loki.data.deleteItem(urn, options);
 };
 
 // Delete the entity or resource with the given urn
@@ -1367,10 +1413,7 @@ loki.data.deleteItem = function (urn, options) {
     let url;
 
     if (loki.urn.isResourceUrn(urn)) {
-        url = loki.web.resourceUrl(
-            urn,
-            options
-        );
+        url = loki.web.resourceUrl(urn, options);
     } else {
         url = loki.web.dataServiceUrl(
             urn,
@@ -1415,10 +1458,7 @@ loki.data.head = function (urn, options) {
     let url;
 
     if (loki.urn.isResourceUrn(urn)) {
-        url = loki.web.resourceUrl(
-            urn,
-            options
-        );
+        url = loki.web.resourceUrl(urn, options);
     } else {
         url = loki.web.dataServiceUrl(
             urn,
@@ -1445,14 +1485,11 @@ loki.data.head = function (urn, options) {
     };
     const promise = axios.head(url).then((d) => d.data);
     // var promise = $.ajax(ajaxOptions);
-    const cPromise = promise.then(
-        (data, status, res) => {
-            const lastModified = res.getResponseHeader("Last-Modified");
+    const cPromise = promise.then((data, status, res) => {
+        const lastModified = res.getResponseHeader("Last-Modified");
 
-            return {"Last-Modified": lastModified};
-        },
-        loki.data._handleJsonpErrHandler
-    );
+        return {"Last-Modified": lastModified};
+    }, loki.data._handleJsonpErrHandler);
 
     return cPromise;
 };
@@ -1509,10 +1546,7 @@ loki.data.list = function (parentUrn, options) {
         dataType = "jsonp"; // automatically adds callback param to url
     }
 
-    const url = loki.web.webServiceUrl(
-        "urn:com:loki:core:model:api:list",
-        options
-    );
+    const url = loki.web.webServiceUrl("urn:com:loki:core:model:api:list", options);
   /** @type {JQueryAjaxSettings} */
     const ajaxOptions = {
         type: "GET",
@@ -1548,20 +1582,14 @@ loki.data.loadResource = function (urn, options) {
         options.queryParams = "";
     }
     options.queryParams = `${options.queryParams}noCache=${new Date().getTime()}`; // prevent caching
-    const url = loki.web.resourceUrl(
-        urn,
-        options
-    );
+    const url = loki.web.resourceUrl(urn, options);
     /** @type {JQueryAjaxSettings} */
     const ajaxOptions = {
         type: "GET",
         dataType: "text",
         url,
     };
-    const promise = axios.get(
-        url,
-        {responseType: "text"}
-    ).then((d) => d.data);
+    const promise = axios.get(url, {responseType: "text"}).then((d) => d.data);
     // var promise = $.ajax(ajaxOptions);
 
     return promise;
@@ -1601,10 +1629,7 @@ loki.data._mapResultsFilter = function (results, hasOutputview) {
 
     if (columnNames) {
         results.results.forEach((result, i) => {
-            newResults.push(loki.data._hash(
-                columnNames,
-                result
-            ));
+            newResults.push(loki.data._hash(columnNames, result));
         });
     }
 
@@ -1651,30 +1676,31 @@ loki.data._addParams = function (params, prefix) {
 
     return paramParam;
 };
-
-// Execute a named query on the server or a query string
-// @memberof module:lokiJQuery
-// @param {Object} options options and parameters for executing the query
-// @param {string} options.queryUrn the urn of the named query to be executed
-// @param {string} options.query the query to be executed
-// @param {string} options.format the format of the results. The default is "json"
-// @param {string} options.dataSpaceUrn the data space on which to run the query
-// @param {string[]|string[][]} options.params the numbered params for the query. Each param may have multiple values.  These params are substituted into the query in the order given. Examples: ["v1",["v2a","v2b],"v3"]
-// @param {Object|Object[]} options.namedParams the named params for the query. Each param may have multiple values.  These params are substituted into the query by name. Examples: {p1:"v1",p2:["v2a","v2b"]}; [{name:"p1",value:"v1"},{name:"p2",value:["v2a","v2b"]}]
-// @param {Object|Object[]} options.expressionParams the expression params for the query.  These params can substitute expressions within the query and are substituted into the query by name. Examples: {p1:"v1",p2:["v2a","v2b"]}; [{name:"p1",value:"v1"},{name:"p2",value:["v2a","v2b"]}]
-// @param {number} options.begin (or options.beginIdx) used in query result paging, the index of the first entity to be returned from the query. Ignored if a LokiYQuery is provided
-// @param {number} options.num (or options.numRequested) used in query result paging, the number of entities to be returned from the query. Ignored if a LokiYQuery is provided
-// @param {string} options.outputView request that the first (and only) column returned by the query (which must be a urn) is turned into an object using the given outputView
-// @param {string} options.outputViews request that all columns returned by the query (which must all be urns) are turned into objects using the given outputViews
-// @param {boolean} options.mapResults if set to true then map the results such that an array of objects is always returned.  Only works for json data.
-// @param {boolean} options.post use POST http method
-// @param {boolean} options.jsonp if true, use jsonp for cross site calls. Also, options.format must be json. Default is false. (Not sure this works for POST.)
-// @param {string} options.serviceGroupUrn use this service group to determine the base of the url when connecting to another application.
-// @param {string} options.connection use this connection to determine the base of the url when connecting to another application.
-// @param {string} options.urlPrefix used to override the beginning of the url so that another application may be called.
-// @param {boolean} options.useCurrentUserAuth if true, use the current user's authentication to access the remote service. (default false). NOTE: does not work cross domain.
-// @return {Promise}
-//
+// /** 
+//  * Execute a named query on the server or a query string
+//  * 
+//  * @template O
+//  * @param {O} options options and parameters for executing the query
+//  * @param {string} options.queryUrn the urn of the named query to be executed
+//  * @param {string} options.query the query to be executed
+//  * @param {string} options.format the format of the results. The default is "json"
+//  * @param {string} options.dataSpaceUrn the data space on which to run the query
+//  * @param {string[]|string[][]} options.params the numbered params for the query. Each param may have multiple values.  These params are substituted into the query in the order given. Examples: ["v1",["v2a","v2b],"v3"]
+//  * @param {Object|Object[]} options.namedParams the named params for the query. Each param may have multiple values.  These params are substituted into the query by name. Examples: {p1:"v1",p2:["v2a","v2b"]}; [{name:"p1",value:"v1"},{name:"p2",value:["v2a","v2b"]}]
+//  * @param {Object|Object[]} options.expressionParams the expression params for the query.  These params can substitute expressions within the query and are substituted into the query by name. Examples: {p1:"v1",p2:["v2a","v2b"]}; [{name:"p1",value:"v1"},{name:"p2",value:["v2a","v2b"]}]
+//  * @param {number} options.begin (or options.beginIdx) used in query result paging, the index of the first entity to be returned from the query. Ignored if a LokiYQuery is provided
+//  * @param {number} options.num (or options.numRequested) used in query result paging, the number of entities to be returned from the query. Ignored if a LokiYQuery is provided
+//  * @param {string} options.outputView request that the first (and only) column returned by the query (which must be a urn) is turned into an object using the given outputView
+//  * @param {string} options.outputViews request that all columns returned by the query (which must all be urns) are turned into objects using the given outputViews
+//  * @param {boolean} options.mapResults if set to true then map the results such that an array of objects is always returned.  Only works for json data.
+//  * @param {boolean} options.post use POST http method
+//  * @param {boolean} options.jsonp if true, use jsonp for cross site calls. Also, options.format must be json. Default is false. (Not sure this works for POST.)
+//  * @param {string} options.serviceGroupUrn use this service group to determine the base of the url when connecting to another application.
+//  * @param {string} options.connection use this connection to determine the base of the url when connecting to another application.
+//  * @param {string} options.urlPrefix used to override the beginning of the url so that another application may be called.
+//  * @param {boolean} options.useCurrentUserAuth if true, use the current user's authentication to access the remote service. (default false). NOTE: does not work cross domain.
+//  * @return {O extends {mapResults: true} ? import("@/shims-loki").QueryResponseMapped : import("@/shims-loki").QueryResponse}
+//  */
 loki.data.query = function (options, unused) {
     if (typeof options === "string") {
     // handle loki.data.query(queryUrn,options) in a backward compatible way
@@ -1732,16 +1758,13 @@ loki.data.query = function (options, unused) {
 
     if (post) {
     // POST
-        url = loki.web.webServiceUrl(
-            "urn:com:loki:core:model:api:query",
-            {
-                subjectUrn: null,
-                queryParams: "",
-                serviceGroupUrn: options.serviceGroupUrn,
-                connection: options.connection,
-                urlPrefix: options.urlPrefix,
-            }
-        );
+        url = loki.web.webServiceUrl("urn:com:loki:core:model:api:query", {
+            subjectUrn: null,
+            queryParams: "",
+            serviceGroupUrn: options.serviceGroupUrn,
+            connection: options.connection,
+            urlPrefix: options.urlPrefix,
+        });
         const postOpts = JSON.parse(JSON.stringify(options)); // make a copy
 
         postOpts.queryUrn = queryUrn;
@@ -1767,10 +1790,7 @@ loki.data.query = function (options, unused) {
             headers,
         };
 
-        promise = axios.post(
-            url,
-            {data: postOpts}
-        ).then((d) => d.data);
+        promise = axios.post(url, {data: postOpts}).then((d) => d.data);
     // promise = $.ajax(ajaxOptions);
     } else {
     // GET
@@ -1852,30 +1872,21 @@ loki.data.query = function (options, unused) {
         }
         // Named parameters are a name/value map and can have multi valued arrays
         if (options.namedParams) {
-            paramParam += loki.data._addParams(
-                options.namedParams,
-                "p_"
-            );
+            paramParam += loki.data._addParams(options.namedParams, "p_");
         }
         // Expression parameters are a name/value map and can have multi valued arrays
         if (options.expressionParams) {
-            paramParam += loki.data._addParams(
-                options.expressionParams,
-                "e_"
-            );
+            paramParam += loki.data._addParams(options.expressionParams, "e_");
         }
         params += paramParam;
 
-        url = loki.web.webServiceUrl(
-            "urn:com:loki:core:model:api:query",
-            {
-                subjectUrn: null,
-                queryParams: params,
-                serviceGroupUrn: options.serviceGroupUrn,
-                connection: options.connection,
-                urlPrefix: options.urlPrefix,
-            }
-        );
+        url = loki.web.webServiceUrl("urn:com:loki:core:model:api:query", {
+            subjectUrn: null,
+            queryParams: params,
+            serviceGroupUrn: options.serviceGroupUrn,
+            connection: options.connection,
+            urlPrefix: options.urlPrefix,
+        });
 
         /** @type {JQueryAjaxSettings} */
         const ajaxOptions = {
@@ -1891,16 +1902,10 @@ loki.data.query = function (options, unused) {
         promise = axios.get(url).then((d) => d.data);
     // promise = $.ajax(ajaxOptions);
     }
-    promise = loki.data._handleJsonp(
-        promise,
-        options
-    );
+    promise = loki.data._handleJsonp(promise, options);
 
     if (options.mapResults) {
-        promise = promise.then((data) => loki.data._mapResultsFilter(
-            data,
-            hasOutputView
-        ));
+        promise = promise.then((data) => loki.data._mapResultsFilter(data, hasOutputView));
     }
 
     return promise;
@@ -1908,19 +1913,10 @@ loki.data.query = function (options, unused) {
 
 loki.data._handleJsonpErrHandler = function (xhr, statusCode, statusText) {
     try {
-        const json = xhr.responseText.
-            replace(
-                /jQuery[0-9_]+\(/g,
-                ""
-            ).
-            replace(
-                /\)/g,
-                ""
-            ).
-            replace(
-                "{\"results\":[",
-                ""
-            );
+        const json = xhr.responseText
+            .replace(/jQuery[0-9_]+\(/g, "")
+            .replace(/\)/g, "")
+            .replace("{\"results\":[", "");
 
         xhr.responseJSON = JSON.parse(json);
     } catch (e) {}
@@ -1931,10 +1927,7 @@ loki.data._handleJsonp = function (promise, options) {
     // NOTE: auth on cross domain jsonp won't work since cross-domain jsonp cannot send headers since it injects a script tag into the html
     if (options.jsonp) {
     // translate error message from jsonp to json if needed
-        promise = promise.then(
-            (data, statusCode, xhr) => data,
-            loki.data._handleJsonpErrHandler
-        );
+        promise = promise.then((data, statusCode, xhr) => data, loki.data._handleJsonpErrHandler);
     }
 
     return promise;
@@ -1974,10 +1967,7 @@ loki.user.login = function (username, password) {
         // processData: false, // send data in body
         contentType: "application/json",
     };
-    const promise = axios.post(
-        url,
-        {data}
-    ).then((d) => d.data);
+    const promise = axios.post(url, {data}).then((d) => d.data);
     // var promise = $.ajax(ajaxOptions);
 
     return promise.then((data) => {
@@ -1994,10 +1984,7 @@ loki.user.login = function (username, password) {
 // @return {Promise} A promise that completes when the logout (on the server side) succeeds or errors
 //
 loki.user.logout = function () {
-    promise = loki.user.login(
-        null,
-        null
-    );
+    promise = loki.user.login(null, null);
 
     return promise;
 };
@@ -2010,10 +1997,7 @@ loki.user.logout = function () {
 loki.user.createGuestUser = function () {
     const url = loki.web.webServiceUrl("urn:com:loki:user:model:api:createGuestUser");
   /** @type {JQueryAjaxSettings} */
-    var promise = axios.post(
-        url,
-        {data}
-    ).then((d) => d.data);
+    var promise = axios.post(url, {data}).then((d) => d.data);
     const ajaxOptions = {
         type: "POST",
         url,
@@ -2064,10 +2048,7 @@ loki.user.createMyUserRequest = function (options) {
         data: JSON.stringify(data),
         contentType: "application/json",
     };
-    const promise = axios.post(
-        url,
-        {data}
-    ).then((d) => d.data);
+    const promise = axios.post(url, {data}).then((d) => d.data);
     // var promise = $.ajax(ajaxOptions);
 
     return promise.then((data) => data);
@@ -2105,10 +2086,7 @@ loki.user.inviteNewUserRequest = function (options) {
         data: JSON.stringify(data),
         contentType: "application/json",
     };
-    const promise = axios.post(
-        url,
-        {data}
-    ).then((d) => d.data);
+    const promise = axios.post(url, {data}).then((d) => d.data);
     // var promise = $.ajax(ajaxOptions);
 
     return promise.then((data) => data);
@@ -2137,10 +2115,7 @@ loki.user.createUserConfirm = function (token, options) {
         data: JSON.stringify(data),
         contentType: "application/json",
     };
-    const promise = axios.post(
-        url,
-        {data}
-    ).then((d) => d.data);
+    const promise = axios.post(url, {data}).then((d) => d.data);
     // var promise = $.ajax(ajaxOptions);
 
     return promise.then((data) => {

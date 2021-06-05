@@ -1,25 +1,70 @@
 @tailwind base;
-@layer base {
-  #app {
-    @apply gap-4 grid grid-cols-3 container;
-  }
-
-  .p-tree-container {
-      @apply h-full;
-  }
-
-  .pi {
-    @apply text-sm;
-  }
-
-  .p-component {
-    @apply leading-tight text-sm;
-  }
-}
 @tailwind components;
 @tailwind utilities;
 @tailwind screens;
 
-html {
-  font-size: 14px;
+@layer base {
+
+  html {
+    @apply text-sm leading-tight text-gray-900;
+    font-size: 15px;
+  }
+
+  body {
+    @apply bg-gray-100;
+  }
+
+  #app {
+    @apply container py-4 mx-auto;
+  }
+
+}
+
+@layer components {
+  .p-component {
+    @apply leading-tight;
+  }
+
+  #searchCard .p-card-body {
+    @apply flex flex-col h-full;
+  }
+
+  #searchCard .p-card-content {
+    @apply flex-grow;
+  }
+
+  .p-autocomplete-input, .p-inputtext {
+    @apply w-full !important;
+    width: 100% !important;
+  }
+
+  .p-autocomplete,
+  .p-float-label {
+    @apply leading-none;
+  }
+
+  .p-float-label input:focus~label,
+  .p-float-label input.p-filled~label,
+  .p-float-label textarea:focus~label,
+  .p-float-label textarea.p-filled~label,
+  .p-float-label .p-inputwrapper-focus~label,
+  .p-float-label .p-inputwrapper-filled~label {
+    @apply -top-4;
+  }
+
+  .data-box {
+    @apply px-1 py-1.5 font-mono bg-gray-100 border-2 border-indigo-400 text-xs whitespace-nowrap overflow-x-auto;
+  }
+
+  .check-box {
+    @apply w-3.5 h-3.5 mr-2 font-light;
+  }
+
+  .check-box:checked {
+    @apply bg-blue-500 border-transparent;
+  }
+
+  .p-datatable .p-datatable-tbody tr.p-highlight {
+    @apply bg-blue-400;
+  }
 }

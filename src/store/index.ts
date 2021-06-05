@@ -1,56 +1,46 @@
-/* eslint-disable no-inline-comments, sort-imports, no-shadow, symbol-description, require-unicode-regexp */
-import axios from "axios";
-import loki from "../loki/index";
-import {get} from "lodash-es";
-import {createLogger, createStore, Store} from "vuex";
-import {InjectionKey} from "vue";
+// * To Type Vuex, see [Vuex + TypeScript](https://dev.to/3vilarthas/vuex-typescript-m4j)
+/* eslint-disable no-ternary */
 
-type State = {
-    loading: boolean;
-}
+import loki from "@/loki";
+import {State, state} from "@/store/state";
+import {Actions, actions} from "@/store/actions";
+import {Mutations, mutations} from "@/store/mutations";
+import {Getters, GetterReturnTypes, getters} from "@/store/getters";
+import {CommitOptions, DispatchOptions, Store as VuexStore, createLogger, createStore} from "vuex";
 
-type SelectionTypes = keyof State["selected"];
+const debug = import.meta.env.DEV;
 
-// define injection key
-// See https://next.vuex.vuejs.org/guide/typescript-support.html#typing-usestore-composition-function
-export const key: InjectionKey<Store<State>> = Symbol();
-const debug = process.env.NODE_ENV !== "production";
-
-export default createStore<State>({
-    state: {
-        loading: false,
-    },
-    getters: {
-        getField: (state) => (path) => get(state, path),
-    },
-    mutations: {
-        updateField (state, {path, value}) {
-            const setStateAtPath = (prev, key, index, array) => {
-                if (array.length === index + 1) {
-                    // eslint-disable-next-line no-param-reassign
-                    prev[key] = value;
-                }
-
-                return prev[key];
-            };
-
-            if (Array.isArray(path)) {
-                path.reduce(setStateAtPath, state);
-            } else {
-                path.split(/[.[\]]+/).reduce(setStateAtPath, state);
-            }
-        },
-    },
-    actions: {
-    },
-    devtools: debug,
+export const store = createStore({
+    state,
+    getters,
+    actions,
+    mutations,
     strict: debug,
-    plugins: loggerPlugin(),
+    plugins: debug
+        ? [createLogger()]
+        : [],
 });
-function loggerPlugin () {
-    if (debug) {
-        return [createLogger()];
-    }
 
-    return [];
+// eslint-disable-next-line no-magic-numbers
+type ActionsPayloads = { [K in keyof Actions]: Parameters<Actions[K]>[1] }
+
+// eslint-disable-next-line no-magic-numbers
+type MutationsPayloads = { [K in keyof Mutations]: Parameters<Mutations[K]>[1] }
+
+type Commit = {
+    commit<K extends keyof Mutations = keyof Mutations>(key: K, payload: MutationsPayloads[K], options?: CommitOptions): ReturnType<Mutations[K]>;
+};
+
+type Dispatch = {
+    dispatch<K extends keyof ActionsPayloads = keyof ActionsPayloads>(key: K, payload: ActionsPayloads[K], options?: DispatchOptions): ReturnType<Actions[K]>;
+};
+
+export type Store<S = State> = Omit<
+    VuexStore<S>,
+    "getters" | "commit" | "dispatch"
+> & Commit & Dispatch & {getters: GetterReturnTypes};
+
+export function useStore () {
+    return store as Store<State>;
 }
+
