@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "test:unit": "jest --config=jest.unit.config.js",
+    "test:unit": "jest --config=jest.unit.config.js"
   },
   "dependencies": {
     "@babel/plugin-external-helpers": "^7.12.13",
