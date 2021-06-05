@@ -11,10 +11,10 @@ module.exports = {
     },
     extends: [
         "plugin:@typescript-eslint/recommended",
-        "eslint:recommended",
+        "eslint:essential",
         "prettier/@typescript-eslint",
         "plugin:prettier/recommended",
-        "plugin:vue/vue3-recommended",
+        "plugin:vue/vue3-essential",
         //"plugin:vue/recommended",
         "prettier/vue",
     ],
@@ -51,6 +51,7 @@ module.exports = {
         },
     ],
     rules: {
+        "vue/valid-template-root": 0,
         "accessor-pairs": "error",
         "array-bracket-newline": ["error", { multiline: true }],
         "array-bracket-spacing": "error",
