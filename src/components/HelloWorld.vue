@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="text-3xl font-bold">
-      {{ msg }}: <div class="font-mono text-sm">
+      <div class="font-mono text-sm">
         {{ rootUrn }}
       </div>
     </h1>
@@ -125,8 +125,3 @@ export default {
 };
 </script>
 
-<style scoped>
-a {
-  color: #42b983;
-}
-</style>

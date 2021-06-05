@@ -1,6 +1,5 @@
 <template>
-    <VueJsonPretty :data="state"/>
-    <hello-world></hello-world>
+    <hello-world />
 </template>
 
 <script lang="ts">
