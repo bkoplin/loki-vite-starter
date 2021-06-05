@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 // @ts-check
 /**
  *
@@ -54,8 +55,7 @@ export default {
         components({
             dirs: [
                 "src",
-                "src/components",
-                "node_modules/primevue",
+                "src/components"
             ],
         }),
         vue(),

@@ -1,17 +1,24 @@
 module.exports = {
     env: {
         node: true,
-        browser: true,
-        commonjs: true,
-        es6: true,
+    },
+    root: true,
+    parser: "vue-eslint-parser",
+    parserOptions: {
+        parser: "@typescript-eslint/parser",
+        ecmaVersion: 2020,
+        sourceType: "module",
     },
     extends: [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "eslint:recommended",
+        "prettier/@typescript-eslint",
+        "plugin:prettier/recommended",
         "plugin:vue/vue3-recommended",
+        //"plugin:vue/recommended",
+        "prettier/vue",
     ],
+    plugins: ["prettier", "@typescript-eslint"],
     ignorePatterns: [".*.js"],
     overrides: [
         {
@@ -43,13 +50,6 @@ module.exports = {
             },
         },
     ],
-    parser: "@typescript-eslint/parser",
-    parserOptions: {
-        project: "tsconfig.json",
-        createDefaultProgram: true,
-        tsconfigRootDir: "./",
-    },
-    plugins: ["vue", "@typescript-eslint"],
     rules: {
         "accessor-pairs": "error",
         "array-bracket-newline": ["error", { multiline: true }],

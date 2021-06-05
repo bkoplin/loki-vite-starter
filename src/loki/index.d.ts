@@ -2,6 +2,9 @@
 // eslint-disable-next-line no-undef
 export as namespace loki;
 
+export namespace app {
+    export const rootUrn : string;
+}
 export namespace data {
     export const query : LokiQuery;
 }

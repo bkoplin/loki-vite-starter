@@ -96,7 +96,7 @@ import {ref} from "vue";
 import loki from "@/loki";
 
 export default {
-    name: "HelloWorld",
+  name: "HelloWorld",
     props: {
         msg: {
             type: String,
