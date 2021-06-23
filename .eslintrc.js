@@ -1,43 +1,11 @@
+/** @format */
+
 module.exports = {
-  env: { node: true },
-  root: true,
   extends: [
-    '@antfu/eslint-config-vue',
     '@antfu/eslint-config-ts',
-  ],
-  overrides: [
-    {
-      files: ['src/webServices/*.js'],
-      env: { es6: false },
-      extends: ['eslint:recommended'],
-      globals: {
-        httpClient: 'readonly',
-        load: 'readonly',
-        loki: 'readonly',
-        base64: 'readonly',
-        _: 'readonly',
-      },
-      parserOptions: {
-        ecmaVersion: 3,
-        sourceType: 'script',
-      },
-      rules: {
-        'func-names': 'warn',
-        'no-new-object': 'off',
-        'no-new': 'off',
-        'object-shorthand': 'off',
-        'no-unused-expressions': 'off',
-        // "no-var": "off",
-        // "prefer-const": "off",
-        // "prefer-template": "off",
-        // "quotes": ["error", "double"],
-        // "vars-on-top": "off",
-      },
-    },
+    '@antfu/eslint-config-vue',
   ],
   rules: {
-    'vue/valid-template-root': 0,
-    "vue/require-direct-export": 0,
     'accessor-pairs': 'error',
     'array-bracket-newline': [
       'error',
@@ -137,7 +105,7 @@ module.exports = {
     'no-caller': 'error',
     'no-catch-shadow': 'error',
     'no-confusing-arrow': 'error',
-    'no-console': 'error',
+    'no-console': 'warning',
     'no-constructor-return': 'error',
     'no-continue': 'error',
     'no-div-regex': 'error',
@@ -297,7 +265,7 @@ module.exports = {
     'require-atomic-updates': 'error',
     'require-await': 'error',
     'require-jsdoc': [0],
-    'require-unicode-regexp': 'error',
+    'require-unicode-regexp': 'warning',
     'rest-spread-spacing': 'error',
     semi: 'error',
     'semi-spacing': 'error',

@@ -114,3 +114,10 @@ dist-ssr
 .vscode/launch.json
 README.html
 .yarnrc.yml
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

@@ -74,10 +74,13 @@ const props = defineProps({
   id: {
     type: String,
     required: false,
-    default: 'loader'
+    default: "loader",
   },
   faProps: {
-    type: Object as Vue.PropType<Pick<typeof FontAwesomeIcon.$props, 'icon'> & Partial<typeof FontAwesomeIcon.$props>>,
+    type: Object as Vue.PropType<
+      Pick<typeof FontAwesomeIcon.$props, "icon"> &
+        Partial<typeof FontAwesomeIcon.$props>
+    >,
   },
   // iconSize: {
   //   type: String as Vue.PropType<'xs'|'sm'|'lg'|'2x'|'3x'|'5x'|'7x'|'10x'>,
@@ -130,24 +133,22 @@ const tl = gsap.timeline({
     // delay: props.delay,
   },
   paused: true,
-  id: props.id
+  id: props.id,
 });
-
 
 watchEffect(
   () => {
     const iconEl = iconRef.value.$el;
-    const componentEl = thisRef.value
+    const componentEl = thisRef.value;
     // console.log({iconRef: iconRef.value.$el, thisRef: toRaw(thisRef.value)})
-    tl.to(gsap.utils.selector(iconEl)('path'), {
+    tl.to(gsap.utils.selector(iconEl)("path"), {
       morphSVG: toIcon,
       id: `${props.id}_morph`,
-    })
-      .to(componentEl, {
-        delay: 0.25,
-        id: `${props.id}_fade`,
-        ...props.endState,
-      });
+    }).to(componentEl, {
+      delay: 0.25,
+      id: `${props.id}_fade`,
+      ...props.endState,
+    });
   },
   { flush: "post" } // See https://v3.vuejs.org/guide/composition-api-template-refs.html#watching-template-refs for meaning
 );
@@ -157,7 +158,9 @@ function animateOut(el: Element, done: () => void) {
 }
 function animateIn(el: Element) {
   spin.value = false;
-  tl.delay(props.delay).reverse().then(() => spin.value = true)
+  tl.delay(props.delay)
+    .reverse()
+    .then(() => (spin.value = true));
 }
 
 function getPathData(arg: Icon | AbstractIcon | FA.AbstractElement[]): {
