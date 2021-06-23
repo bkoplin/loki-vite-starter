@@ -113,3 +113,4 @@ dist-ssr
 .env
 .vscode/launch.json
 README.html
+.yarnrc.yml
