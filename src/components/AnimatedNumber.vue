@@ -15,22 +15,27 @@ const props = defineProps({
   format: {
     default: '0,0[.]0',
     type: String,
+    required: false,
   },
   raw: {
     default: true,
     type: Boolean,
+    required: false,
   },
   duration: {
     default: 1,
     type: Number,
+    required: false,
   },
   delay: {
     default: 0,
     type: Number,
+    required: false,
   },
   ease: {
-    default: 'circ.inOut',
-    type: String as PropType<gsap.EaseFunction | string>,
+    type: String,
+    required: false,
+    default: 'power2.inOut',
   },
 })
 
