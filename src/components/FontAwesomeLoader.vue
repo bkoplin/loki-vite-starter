@@ -76,24 +76,24 @@ const props = defineProps({
     required: false,
     default: 'loader'
   },
-  iconProps: {
-    type: Object as Vue.PropType<FAV.FontAwesomeIconProps>,
+  faProps: {
+    type: Object as Vue.PropType<Pick<typeof FontAwesomeIcon.$props, 'icon'> & Partial<typeof FontAwesomeIcon.$props>>,
   },
-  iconSize: {
-    type: String as Vue.PropType<'xs'|'sm'|'lg'|'2x'|'3x'|'5x'|'7x'|'10x'>,
-    required: false,
-    default: '3x',
-    validator: (val : string) => [
-        'xs'
-        , 'sm'
-        , 'lg'
-        , '2x'
-        , '3x'
-        , '5x'
-        , '7x'
-        , '10x'
-      ].includes(val)
-  },
+  // iconSize: {
+  //   type: String as Vue.PropType<'xs'|'sm'|'lg'|'2x'|'3x'|'5x'|'7x'|'10x'>,
+  //   required: false,
+  //   default: '3x',
+  //   validator: (val : string) => [
+  //       'xs'
+  //       , 'sm'
+  //       , 'lg'
+  //       , '2x'
+  //       , '3x'
+  //       , '5x'
+  //       , '7x'
+  //       , '10x'
+  //     ].includes(val)
+  // },
   duration: {
     default: 0.25,
     type: Number,
