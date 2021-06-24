@@ -1,24 +1,22 @@
 <template>
-  <div class="w-full m-4 grid gap-4">
-    <div class="col-start-1 col-end-5">
-      <div class="btn-group btn-group-sm w-full">
-        <div
-          class="btn btn-outline-primary w-1/2"
-          @click="toggleShow"
-        >
-          {{ show ? 'HIDE' : 'SHOW' }}
-        </div>
-        <div
-          class="btn btn-outline-secondary w-1/2"
-          :class="{disabled: show}"
-          :disabled="show"
-          @click="randomNum"
-        >
-          RANDOMIZE
-        </div>
+  <div class="w-full m-4 grid gap-4 grid-cols-1">
+    <div class="btn-group btn-group-sm w-full">
+      <div
+        class="btn btn-outline-primary w-1/2"
+        @click="toggleShow"
+      >
+        {{ show ? 'HIDE' : 'SHOW' }}
+      </div>
+      <div
+        class="btn btn-outline-secondary w-1/2"
+        :class="{disabled: show}"
+        :disabled="show"
+        @click="randomNum"
+      >
+        RANDOMIZE
       </div>
     </div>
-    <div class="w-full relative h-px-450 col-span-4">
+    <div class="w-full relative h-px-150 ">
       <animated-number
         :value="number"
         :format="'0,0'"
