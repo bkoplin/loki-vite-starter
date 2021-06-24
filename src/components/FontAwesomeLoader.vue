@@ -22,9 +22,9 @@
       >
         <font-awesome-icon
           ref="iconRef"
-          :icon="lightCog"
+          :icon="fromIconDef"
           :spin="spin"
-          :size="faProps.size"
+          v-bind="faProps"
         ></font-awesome-icon>
       </div>
     </div>
@@ -50,8 +50,8 @@ import { gsap } from 'gsap'
 import { MorphSVGPlugin } from 'gsap/MorphSVGPlugin'
 
 import {
-  faCheckCircle as lightCheckCircle,
-  faCog as lightCog
+  faCog as fromIconDef,
+  faCheckCircle as toIconDef
 } from '@fortawesome/pro-light-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 gsap.registerPlugin(MorphSVGPlugin)
@@ -106,11 +106,11 @@ const emit = defineEmit({ done: () => true })
 const thisRef = ref()
 const { show } = toRefs(props)
 const spin = ref(show.value)
-const cogAbstract = FA.icon(lightCog).abstract
-const checkCircleAbstract = FA.icon(lightCheckCircle).abstract
+const fromIconAbstract = FA.icon(fromIconDef).abstract
+const toIconAbstract = FA.icon(toIconDef).abstract
 const iconRef = ref()
-const fromIcon = getPathData(cogAbstract)?.d
-const toIcon = getPathData(checkCircleAbstract)?.d
+const fromIcon = getPathData(fromIconAbstract)?.d
+const toIcon = getPathData(toIconAbstract)?.d
 const tl = gsap.timeline({
   defaults: {
     duration: props.duration,
@@ -126,8 +126,6 @@ watchEffect(
     const iconEl = iconRef.value.$el
     const componentEl = thisRef.value
 
-    // console.log({iconRef: iconRef.value.$el, thisRef: toRaw(thisRef.value)})
-
     tl.to(gsap.utils.selector(iconEl)('path'), {
       morphSVG: toIcon,
       id: `${props.id}_morph`,
@@ -137,14 +135,16 @@ watchEffect(
       ...props.endState,
     })
   },
-  { flush: 'post' } // See https://v3.vuejs.org/guide/composition-api-template-refs.html#watching-template-refs for meaning
+  // * See https://v3.vuejs.org/guide/composition-api-template-refs.html#watching-template-refs
+  // * for meaning of "flush" parameter
+  { flush: 'post' }
 )
-function animateOut(el: Element, done: () => void) {
+function animateOut(_el: Element, done: () => void) {
   spin.value = false
   tl.delay(props.delay).play()
     .then(done)
 }
-function animateIn(el: Element) {
+function animateIn(_el: Element) {
   spin.value = false
   tl.delay(props.delay)
     .reverse()
