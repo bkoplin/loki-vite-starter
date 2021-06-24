@@ -1,27 +1,31 @@
 <template>
   <div
-    class="w-full m-4 flex flex-col gap-4"
+    class="w-full m-4 grid gap-4"
   >
     <div
-      class="btn-group btn-group-sm w-full"
+      class="col-start-1 col-end-5"
     >
       <div
-        class="btn btn-outline-primary"
-        @click="toggleShow"
+        class="btn-group btn-group-sm w-full"
       >
-        {{ show ? 'HIDE' : 'SHOW' }}
-      </div>
-      <div
-        class="btn btn-outline-secondary"
-        :class="{disabled: show}"
-        :disabled="show"
-        @click="randomNum"
-      >
-        RANDOMIZE
+        <div
+          class="btn btn-outline-primary w-1/2"
+          @click="toggleShow"
+        >
+          {{ show ? 'HIDE' : 'SHOW' }}
+        </div>
+        <div
+          class="btn btn-outline-secondary w-1/2"
+          :class="{disabled: show}"
+          :disabled="show"
+          @click="randomNum"
+        >
+          RANDOMIZE
+        </div>
       </div>
     </div>
     <div
-      class="w-full relative h-px-450"
+      class="w-full relative h-px-450 col-span-4"
     >
       <animated-number
         :value="number"
@@ -29,7 +33,7 @@
       ></animated-number>
       <font-awesome-loader
         :show="show"
-        :fa-props="{size: '3x'}"
+        :fa-props="{size: '6x'}"
       ></font-awesome-loader>
     </div>
   </div>
