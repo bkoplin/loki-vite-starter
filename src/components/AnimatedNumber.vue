@@ -1,9 +1,14 @@
 <template>
-  <span v-if="raw">{{ tweeningValue }}</span><span v-else>{{ textValue }}</span>
+  <span
+    v-if="raw && format === '0,0[.]0'"
+  >{{ tweeningValue }}</span><span
+    v-else
+  >{{ textValue }}</span>
 </template>
 
 <script setup="props" lang="ts">
-import { watch, defineProps, computed, onMounted, toRefs, ref, reactive } from 'vue'
+import * as Vue from 'vue'
+import { computed, defineProps, onMounted, reactive, ref, toRefs, watch } from 'vue'
 import gsap from 'gsap'
 import numeral from 'numeral'
 
@@ -33,23 +38,19 @@ const props = defineProps({
     required: false,
   },
   ease: {
-    type: String,
+    type: String as Vue.PropType<gsap.TweenVars['ease']>,
     required: false,
     default: 'power2.inOut',
   },
 })
-
 const { value } = toRefs(props)
-
 const tweeningValue = ref(props.value)
-const textValue = computed(() =>
-  numeral(Math.floor(tweeningValue.value)).format(props.format),
-)
+const textValue = computed(() => numeral(Math.floor(tweeningValue.value)).format(props.format))
 
 watch(value, (newValue, oldValue) => {
   gsap.to(
     tweeningValue,
-    { value: newValue, duration: props.duration, ease: props.ease, delay: props.delay },
+    { value: newValue, duration: props.duration, ease: props.ease, delay: props.delay }
   )
 })
 </script>
