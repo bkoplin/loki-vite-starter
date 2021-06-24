@@ -1,24 +1,59 @@
 <template>
-  <hello-world />
-  <FontAwesomeLoader
-  :fa-props="{size: '3x'}"
-  ></FontAwesomeLoader>
+  <div
+    class="w-full m-4 flex flex-col gap-4"
+  >
+    <div
+      class="btn-group btn-group-sm w-full"
+    >
+      <div
+        class="btn btn-outline-primary"
+        @click="toggleShow"
+      >
+        {{ show ? 'HIDE' : 'SHOW' }}
+      </div>
+      <div
+        class="btn btn-outline-secondary"
+        :class="{disabled: show}"
+        :disabled="show"
+        @click="randomNum"
+      >
+        RANDOMIZE
+      </div>
+    </div>
+    <div
+      class="w-full relative h-px-450"
+    >
+      <animated-number
+        :value="number"
+        :format="'0,0'"
+      ></animated-number>
+      <font-awesome-loader
+        :show="show"
+        :fa-props="{size: '3x'}"
+      ></font-awesome-loader>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import VueJsonPretty from "vue-json-pretty";
-import HelloWorld from "@/components/HelloWorld.vue";
-import FontAwesomeLoader from "@/components/FontAwesomeLoader.vue";
-import { useStore } from "@/store";
+import VueJsonPretty from 'vue-json-pretty'
+import FontAwesomeLoader from '@/components/FontAwesomeLoader.vue'
+import { useStore } from '@/store'
 import {
   computed,
   onMounted,
   reactive,
   ref,
-  toRaw,
-} from "vue";
+  toRaw
+} from 'vue'
+import AnimatedNumber from './components/AnimatedNumber.vue'
 
-const store = useStore();
-const state = computed(() => store.state);
-const getters = computed(() => store.getters);
+const store = useStore()
+const state = computed(() => store.state)
+const getters = computed(() => store.getters)
+const show = ref(true)
+const number = ref(0)
+const toggleShow = () => show.value = !show.value
+const randomNum = () => number.value = Math.random() * 100000
+
 </script>
