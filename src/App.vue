@@ -1,13 +1,7 @@
 <template>
-  <div
-    class="w-full m-4 grid gap-4"
-  >
-    <div
-      class="col-start-1 col-end-5"
-    >
-      <div
-        class="btn-group btn-group-sm w-full"
-      >
+  <div class="w-full m-4 grid gap-4">
+    <div class="col-start-1 col-end-5">
+      <div class="btn-group btn-group-sm w-full">
         <div
           class="btn btn-outline-primary w-1/2"
           @click="toggleShow"
@@ -24,9 +18,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="w-full relative h-px-450 col-span-4"
-    >
+    <div class="w-full relative h-px-450 col-span-4">
       <animated-number
         :value="number"
         :format="'0,0'"
