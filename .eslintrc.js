@@ -6,6 +6,24 @@ module.exports = {
     '@antfu/eslint-config-vue',
   ],
   rules: {
+    'vue/max-attributes-per-line': [
+      'error',
+      {
+        singleline: {
+          max: 1,
+          allowFirstLine: false,
+        },
+        multiline: {
+          max: 1,
+          allowFirstLine: false,
+        },
+      },
+    ],
+    'vue/component-name-in-template-casing': [
+      'error',
+      'kebab-case',
+      { registeredComponentsOnly: false },
+    ],
     'accessor-pairs': 'error',
     'array-bracket-newline': [
       'error',
@@ -67,7 +85,10 @@ module.exports = {
     'id-length': 'off',
     'id-match': 'error',
     'implicit-arrow-linebreak': 'error',
-    indent: 0,
+    indent: [
+      'error',
+      2,
+    ],
     'indent-legacy': 0,
     'init-declarations': 'error',
     'jsx-quotes': 'error',
@@ -105,7 +126,7 @@ module.exports = {
     'no-caller': 'error',
     'no-catch-shadow': 'error',
     'no-confusing-arrow': 'error',
-    'no-console': 'warning',
+    'no-console': 1,
     'no-constructor-return': 'error',
     'no-continue': 'error',
     'no-div-regex': 'error',
@@ -164,7 +185,7 @@ module.exports = {
     'no-restricted-modules': 'error',
     'no-restricted-properties': 'error',
     'no-restricted-syntax': 'error',
-    'no-return-assign': 'error',
+    'no-return-assign': 1,
     'no-return-await': 'error',
     'no-script-url': 'error',
     'no-self-compare': 'error',
@@ -260,12 +281,15 @@ module.exports = {
       'error',
       'as-needed',
     ],
-    quotes: 'error',
+    quotes: [
+      'error',
+      'single',
+    ],
     radix: 'error',
     'require-atomic-updates': 'error',
     'require-await': 'error',
     'require-jsdoc': [0],
-    'require-unicode-regexp': 'warning',
+    'require-unicode-regexp': 1,
     'rest-spread-spacing': 'error',
     semi: 'error',
     'semi-spacing': 'error',
