@@ -1,6 +1,6 @@
 <template>
-  <app-router-link />
-  <app-router-view />
+    <app-router-link />
+    <app-router-view />
 </template>
 
 <script setup lang="ts">

@@ -5,7 +5,13 @@ const pageBaseUrl = `${import.meta.env.VITE_APP_CODE_NAME_TEST}/pages/urn/com/${
 
 export const insightWallUrl = `${baseUrl}${import.meta.env.VITE_APP_CODE_NAME_TEST}/pages/urn/com/saplingdata/caseMaker/app/pages/insightWall/v/`
 
-const routes: RouteRecordRaw[] = []
+const routes: RouteRecordRaw[] = [
+  {
+    name: 'home',
+    path: '/'
+    component: () => import('@/views/Home.vue'),
+  }
+]
 
 const router = createRouter({
   history: import.meta.env.DEV ? createWebHistory() : createWebHistory(pageBaseUrl),

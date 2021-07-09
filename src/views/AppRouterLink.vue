@@ -1,6 +1,6 @@
 <template>
   <nav class="content-start col-span-2 flex flex-row flex-wrap h-full relative">
-    <router-link></router-link>
+    <router-link :to="{name: 'home'}"></router-link>
     <a
       class="
         py-2
