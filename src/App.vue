@@ -1,59 +1,16 @@
 <template>
-  <div class="w-full m-4 grid gap-4 grid-cols-1">
-    <div class="btn-group btn-group-sm w-full">
-      <div
-        class="btn btn-outline-primary w-1/2"
-        @click="toggleShow"
-      >
-        {{ show ? 'HIDE' : 'SHOW' }}
-      </div>
-      <div
-        class="btn btn-outline-secondary w-1/2"
-        :class="{disabled: show}"
-        :disabled="show"
-        @click="randomNum"
-      >
-        RANDOMIZE
-      </div>
-    </div>
-    <div class="w-full relative h-px-150 ">
-      <animated-number
-        :value="number"
-        :format="'0,0'"
-      ></animated-number>
-      <font-awesome-loader
-        :show="show"
-        :fa-props="{size: '6x'}"
-      ></font-awesome-loader>
-    </div>
-    <div class="row-start-2 w-full">
-      <range-slider
-        v-model:from="number"
-      ></range-slider>
-    </div>
-  </div>
+  <app-router-link />
+  <app-router-view />
 </template>
 
 <script setup lang="ts">
-import VueJsonPretty from 'vue-json-pretty'
-import FontAwesomeLoader from '@/components/LoadersFontAwesome.vue'
-import RangeSlider from '@/components/FormsRangeSlider.vue'
+import AppRouterLink from '@/views/AppRouterLink.vue'
+import AppRouterView from '@/views/AppRouterView.vue'
+import { defineProps } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import {
-  computed,
-  onMounted,
-  reactive,
-  ref,
-  toRaw
-} from 'vue'
-import AnimatedNumber from './components/AnimatedNumber.vue'
-
 const store = useStore()
-const state = computed(() => store.state)
-const getters = computed(() => store.getters)
-const show = ref(true)
-const number = ref(0)
-const toggleShow = () => show.value = !show.value
-const randomNum = () => number.value = Math.random() * 100000
+const router = useRouter()
+const props = defineProps(['id'])
 
 </script>
