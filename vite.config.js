@@ -21,7 +21,10 @@ dotEnv.config()
 
 const { env } = process
 const projectRootDir = process.cwd()
-const srcDir = path.resolve(projectRootDir, 'src')
+const srcDir = path.resolve(
+  projectRootDir,
+  'src'
+)
 const lokiAuth = `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`
 /**
  *
