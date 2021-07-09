@@ -26,12 +26,18 @@
         :fa-props="{size: '6x'}"
       ></font-awesome-loader>
     </div>
+    <div class="row-start-2 w-full">
+      <range-slider
+        v-model:from="number"
+      ></range-slider>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import VueJsonPretty from 'vue-json-pretty'
-import FontAwesomeLoader from '@/components/FontAwesomeLoader.vue'
+import FontAwesomeLoader from '@/components/LoadersFontAwesome.vue'
+import RangeSlider from '@/components/FormsRangeSlider.vue'
 import { useStore } from '@/store'
 import {
   computed,

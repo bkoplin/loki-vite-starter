@@ -19,6 +19,8 @@ module.exports = {
         },
       },
     ],
+    'vue/html-indent': 'error',
+    'vue/attributes-order': 'error',
     'vue/component-name-in-template-casing': [
       'error',
       'kebab-case',
@@ -72,7 +74,7 @@ module.exports = {
     'func-style': [0],
     'function-call-argument-newline': [
       'error',
-      'consistent',
+      'always',
     ],
     'function-paren-newline': 'error',
     'generator-star-spacing': 'error',
@@ -130,7 +132,7 @@ module.exports = {
     'no-constructor-return': 'error',
     'no-continue': 'error',
     'no-div-regex': 'error',
-    'no-duplicate-imports': 'error',
+    'no-duplicate-imports': 1,
     'no-else-return': 'error',
     'no-empty-function': 'error',
     'no-eq-null': 'error',
@@ -216,7 +218,7 @@ module.exports = {
     'no-useless-concat': 'error',
     'no-useless-constructor': 'error',
     'no-useless-rename': 'error',
-    'no-useless-return': 'error',
+    'no-useless-return': 1,
     'no-var': 'error',
     'no-void': 'error',
     'no-warning-comments': 'error',
@@ -235,7 +237,7 @@ module.exports = {
     'operator-linebreak': 'error',
     'padded-blocks': 'off',
     'padding-line-between-statements': [
-      'error',
+      1,
       {
         blankLine: 'always',
         next: '*',
