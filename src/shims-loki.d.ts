@@ -1,275 +1,280 @@
-/* eslint-disable no-unused-expressions */
-
 export interface LokiQueryParamsObject {
-    [name: string]: any;
+  [name: string]: any
 }
 export interface LokiQueryParamsArray {
-    name: string;
-    value: any;
-}[];
+  name: string
+  value: any
+}
+[]
 
 export type BaseQueryOptions = {
-    queryUrn: string;
-    query: string;
-    namedParams?: LokiQueryParamsObject | LokiQueryParamsArray;
-    expressionParams?: LokiQueryParamsObject | LokiQueryParamsArray;
-    format?: "json" | string;
-    dataSpaceUrn?: string;
-    begin?: number;
-    num?: number;
-    mapResults: undefined|true;
-    outputView?: string;
-    outputViews?: string;
-    post?: boolean;
-    jsonp?: boolean;
-    serviceGroupUrn?: string;
-    connection?: string;
-    urlPrefix?: string;
-    useCurrentUserAuth?: boolean;
+  queryUrn: string
+  query: string
+  namedParams?: LokiQueryParamsObject | LokiQueryParamsArray
+  expressionParams?: LokiQueryParamsObject | LokiQueryParamsArray
+  format?: 'json' | string
+  dataSpaceUrn?: string
+  begin?: number
+  num?: number
+  mapResults: undefined | true
+  outputView?: string
+  outputViews?: string
+  post?: boolean
+  jsonp?: boolean
+  serviceGroupUrn?: string
+  connection?: string
+  urlPrefix?: string
+  useCurrentUserAuth?: boolean
 }
 
-export type QueryOptions<Opts = BaseQueryOptions> = Opts extends {queryUrn: string} ? Omit<BaseQueryOptions, "query"> : Omit<BaseQueryOptions, "queryUrn">;
+export type QueryOptions<Opts = BaseQueryOptions> = Opts extends {
+  queryUrn: string
+}
+  ? Omit<BaseQueryOptions, 'query'>
+  : Omit<BaseQueryOptions, 'queryUrn'>
 
 export type QueryResponseMapped<Type> = {
-    results: Type[];
-    columnNames: [keyof Type];
-};
+  results: Type[]
+  columnNames: [keyof Type]
+}
 
 export type QueryResponse<Type, K = keyof Type> = {
-    results: [Type[K]];
-    columnNames: K;
-};
+  results: [Type[K]]
+  columnNames: K
+}
 
 export type LokiQuery<Opts extends BaseQueryOptions> = {
-    <Type>(opts: Opts): Opts extends {mapResults: true} ? Promise<QueryResponseMapped<Type>> : Promise<QueryResponse<Type>>;
-};
+  <Type>(opts: Opts): Opts extends { mapResults: true }
+    ? Promise<QueryResponseMapped<Type>>
+    : Promise<QueryResponse<Type>>
+}
 export interface UserSaveObject {
-    createDate?: string;
-    createByUrn?: string;
-    lastEditByUrn: string;
-    lastEditDate: string;
+  createDate?: string
+  createByUrn?: string
+  lastEditByUrn: string
+  lastEditDate: string
 }
 
 export type PageDataObject = UserSaveObject & {
-    urn: string;
-    names: string[];
-    name: string;
-    summary: string;
-    description?: string;
-    descriptionHtml?: string;
-    serviceOutput: ServiceOutput;
-    operationImpls: (OperationImpl & { pageTemplate: string })[];
-    purposeUrns: string[];
-    boundToEntityTypeUrn?: string;
-    entityTypeUrns: string[];
-    combinedItemUrns: string[];
-    inactive: boolean;
-    deprecated?: Boolean;
-    lastEditDateObs?: string;
-    lastEditByUrnObs?: string;
-    textSet?: string[];
-    test?: string;
-    pages: Page[];
-};
+  urn: string
+  names: string[]
+  name: string
+  summary: string
+  description?: string
+  descriptionHtml?: string
+  serviceOutput: ServiceOutput
+  operationImpls: (OperationImpl & { pageTemplate: string })[]
+  purposeUrns: string[]
+  boundToEntityTypeUrn?: string
+  entityTypeUrns: string[]
+  combinedItemUrns: string[]
+  inactive: boolean
+  deprecated?: Boolean
+  lastEditDateObs?: string
+  lastEditByUrnObs?: string
+  textSet?: string[]
+  test?: string
+  pages: Page[]
+}
 
 export interface OperationImpl {
-    operation: string;
-    method: string;
-    pageTemplate?: string;
-    executionScriptUrn?: string;
-    securityFunctionGroups: any[];
-    actionImpls: ActionImpl[];
+  operation: string
+  method: string
+  pageTemplate?: string
+  executionScriptUrn?: string
+  securityFunctionGroups: any[]
+  actionImpls: ActionImpl[]
 }
 
 export interface ActionImpl {
-    action: string;
-    securityFunctionGroups: string[];
+  action: string
+  securityFunctionGroups: string[]
 }
 
 export interface Page {
-    urn: string;
+  urn: string
 }
 
 export interface ServiceOutput {
-    outputContentTypeUrn: string;
-    oldContentType: string;
-    maxAge: string;
+  outputContentTypeUrn: string
+  oldContentType: string
+  maxAge: string
 }
 
 export type QueryDataObject = UserSaveObject & {
-    urn: string;
-    name: string;
-    summary: string;
-    queryString: string;
-    securityFunctionUrns: string[];
-    boundToEntityTypeUrn?: string;
-    childQueries?: ChildQuery[];
-    inactive: boolean;
-    queryEngineUrn?: string;
-    dataSpaceUrn?: string;
-    queryParams?: QueryParam[];
-};
+  urn: string
+  name: string
+  summary: string
+  queryString: string
+  securityFunctionUrns: string[]
+  boundToEntityTypeUrn?: string
+  childQueries?: ChildQuery[]
+  inactive: boolean
+  queryEngineUrn?: string
+  dataSpaceUrn?: string
+  queryParams?: QueryParam[]
+}
 
-export type LokiQueryObject = QueryDataObject;
+export type LokiQueryObject = QueryDataObject
 
 enum ValueTypeUrn {
-    STRING = "urn:com:loki:core:model:types:string",
-    BOOL = "urn:com:loki:core:model:types:bool",
-    INTEGER = "urn:com:loki:core:model:types:integer",
-    DATE = "urn:com:loki:core:model:types:date",
-    DECIMAL = "urn:com:loki:core:model:types:decimal",
+  STRING = 'urn:com:loki:core:model:types:string',
+  BOOL = 'urn:com:loki:core:model:types:bool',
+  INTEGER = 'urn:com:loki:core:model:types:integer',
+  DATE = 'urn:com:loki:core:model:types:date',
+  DECIMAL = 'urn:com:loki:core:model:types:decimal',
 }
 
 export interface QueryParam {
-    codeName: string;
-    valueTypeUrn: ValueTypeUrn;
+  codeName: string
+  valueTypeUrn: ValueTypeUrn
 }
 
 export interface WebserviceDataObject {
-    urn: string;
-    entityTypeUrns: string[];
-    summary: string;
-    description: string;
-    operationImpls: (OperationImpl & { executionScriptUrn: string })[];
-    purposeUrns: string[];
-    boundToEntityTypeUrn: null;
-    name: string;
-    inactive: boolean;
-    lastEditByUrn: string;
-    lastEditDate: string;
+  urn: string
+  entityTypeUrns: string[]
+  summary: string
+  description: string
+  operationImpls: (OperationImpl & { executionScriptUrn: string })[]
+  purposeUrns: string[]
+  boundToEntityTypeUrn: null
+  name: string
+  inactive: boolean
+  lastEditByUrn: string
+  lastEditDate: string
 }
 
 // Generated by https://quicktype.io
 
 export interface LokiEntityType {
-    urn: string;
-    entityTypeUrns: string[];
-    names: string[];
-    name: string;
-    summary: null;
-    description: string;
-    descriptionHtml: null;
-    fields: LokiFieldtype[];
-    modifiers: any[];
-    instanceEntityTypeUrn: string;
-    purposeUrns: string[];
-    inactive: null;
-    createDate: string;
-    lastEditDate: string;
-    createByUrn: string;
-    lastEditByUrn: string;
+  urn: string
+  entityTypeUrns: string[]
+  names: string[]
+  name: string
+  summary: null
+  description: string
+  descriptionHtml: null
+  fields: LokiFieldtype[]
+  modifiers: any[]
+  instanceEntityTypeUrn: string
+  purposeUrns: string[]
+  inactive: null
+  createDate: string
+  lastEditDate: string
+  createByUrn: string
+  lastEditByUrn: string
 }
 
 export interface LokiFieldtype {
-    entityTypeUrns: any[];
-    codeName: string;
-    propertyViewUrn: string;
-    modifierUrns: any[];
-    modifierValues: FieldModifierValue[];
-    valueViewUrn: null;
-    dataConverterUrn: null | string;
-    indexValue: number | null;
-    joinTypeUrn: null;
-    propertyUrn: null;
-    dateFormat: null;
-    estMaxLength: null;
-    estMaxPrecision: null;
-    estMaxScale: null;
-    valueTypeUrn: null;
+  entityTypeUrns: any[]
+  codeName: string
+  propertyViewUrn: string
+  modifierUrns: any[]
+  modifierValues: FieldModifierValue[]
+  valueViewUrn: null
+  dataConverterUrn: null | string
+  indexValue: number | null
+  joinTypeUrn: null
+  propertyUrn: null
+  dateFormat: null
+  estMaxLength: null
+  estMaxPrecision: null
+  estMaxScale: null
+  valueTypeUrn: null
 }
 
 export interface FieldModifierValue {
-    modifierUrn: string;
-    modifierValue: string;
+  modifierUrn: string
+  modifierValue: string
 }
 
 export interface DataSpace {
-    urn: string;
-    entityTypeUrns: string[];
-    name: string;
-    summary: string;
-    description: null;
-    isDefault: null;
-    inactive: null;
-    createDate: string;
-    createByUrn: string;
-    lastEditDate: string;
-    lastEditByUrn: string;
-    queryEngineInstanceUrn: null;
-    dataSpaceConfigUrn: string;
-    queryEngineTypeUrn: null;
-    runningQuery: ChildQuery;
-    killQuery: ChildQuery;
+  urn: string
+  entityTypeUrns: string[]
+  name: string
+  summary: string
+  description: null
+  isDefault: null
+  inactive: null
+  createDate: string
+  createByUrn: string
+  lastEditDate: string
+  lastEditByUrn: string
+  queryEngineInstanceUrn: null
+  dataSpaceConfigUrn: string
+  queryEngineTypeUrn: null
+  runningQuery: ChildQuery
+  killQuery: ChildQuery
 }
 export interface LokiCase {
-    name: string;
-    summary: string | null;
-    caseNumber: string | null;
-    defaultView: string;
-    insightFactsLabel: string;
-    insightSubjectsLabel: string;
-    queryLimit: number;
-    editByUrn: string;
-    editDate: string;
+  name: string
+  summary: string | null
+  caseNumber: string | null
+  defaultView: string
+  insightFactsLabel: string
+  insightSubjectsLabel: string
+  queryLimit: number
+  editByUrn: string
+  editDate: string
 }
 
 export interface DataSpaceConfig {
-    urn: string;
-    entityTypeUrns: string[];
-    codeName: null;
-    inactive: boolean;
-    readOnly: null;
-    disableLoadConfig: null;
-    refDataSpaceUrn: null;
-    oldRefDataSpaceUrn: null;
+  urn: string
+  entityTypeUrns: string[]
+  codeName: null
+  inactive: boolean
+  readOnly: null
+  disableLoadConfig: null
+  refDataSpaceUrn: null
+  oldRefDataSpaceUrn: null
 }
 
 export interface ChildQuery {
-    urn: string;
-    name: null;
-    summary: null;
-    queryString: string;
-    queryParams: QueryParam[];
-    dataSpaceUrn: string;
-    queryEngineUrn: null;
+  urn: string
+  name: null
+  summary: null
+  queryString: string
+  queryParams: QueryParam[]
+  dataSpaceUrn: string
+  queryEngineUrn: null
 }
 
 // Generated by https://quicktype.io
 
 export interface Insight {
-    code: Code;
-    component: Component;
-    urn: string;
-    presentationTypeUrn: string;
-    presentationConfig: PresentationConfig;
-    childQueries: any[];
-    securityFunctionUrns: string[];
-    queryString: string;
-    queryEngineUrn: string;
-    cacheEnable: boolean;
-    presentationQueryConfig: null;
-    componentParameters: ComponentParameter[];
-    componentCssClass: string;
-    displayName: string;
-    queryParams: QueryParam[];
-    name: string;
+  code: Code
+  component: Component
+  urn: string
+  presentationTypeUrn: string
+  presentationConfig: PresentationConfig
+  childQueries: any[]
+  securityFunctionUrns: string[]
+  queryString: string
+  queryEngineUrn: string
+  cacheEnable: boolean
+  presentationQueryConfig: null
+  componentParameters: ComponentParameter[]
+  componentCssClass: string
+  displayName: string
+  queryParams: QueryParam[]
+  name: string
 }
 
 export interface Code {
-    html: string;
-    javascript: string;
+  html: string
+  javascript: string
 }
 
 export interface Component {
-    code: Code;
+  code: Code
 }
 
 export interface ComponentParameter {
-    required: boolean;
-    used: boolean;
-    codeName: string;
+  required: boolean
+  used: boolean
+  codeName: string
 }
 
 export interface PresentationConfig {
-    entityTypeUrns: any[];
+  entityTypeUrns: any[]
 }

@@ -1,9 +1,8 @@
 {
   "exclude": ["./node_modules", "./dist"],
-  "include": ["src"],
+  "include": ["./src"],
   "compilerOptions": {
       "jsx": "react",
-      "allowJs": true,
       "allowSyntheticDefaultImports": true,
       "baseUrl": "./",
       "esModuleInterop": true,
@@ -22,7 +21,7 @@
       "strict": true,
       "target": "es6",
       "typeRoots": [
-        "./node_modules/@types"
+        "./node_modules", "./src"
       ]
   }
 }
