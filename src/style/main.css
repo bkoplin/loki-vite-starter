@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+
+@layer base {
+  html {
+    @apply text-sm leading-tight text-gray-900;
+    font-size: 15px;
+  }
+  
+  body {
+    @apply bg-gray-100 overscroll-none;
+  }
+  
+  #app {
+    @apply container mx-auto w-screen p-2 relative h-screen;
+  }
+}
