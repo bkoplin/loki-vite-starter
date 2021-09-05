@@ -51,9 +51,9 @@ The production build of your application, located in the `dist` directory by def
 ```
 .env
 
-LOKI_USERNAME               # Loki username
-LOKI_PASSWORD               # Loki password
-LOKI_USER_URN               # Full loki user URN (for saving uploaded data)
+VITE_LOKI_USERNAME               # Loki username
+VITE_LOKI_PASSWORD               # Loki password
+VITE_LOKI_USER_URN               # Full loki user URN (for saving uploaded data)
 VITE_CLOUD_CODE_NAME        # The URN segment identifying the Loki app that you plan to deploy to (the last segment of loki.app.rootUrn)
 VITE_APP_CODE_NAME_TEST   # The code name of the development environment app (used with server in vite.config.js) – essentially, the code name of the Loki environment in which the app would be viewed
 VITE_APP_CODE_NAME          # The code name of the app to which the compiled code will be deployed

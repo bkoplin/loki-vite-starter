@@ -19,8 +19,8 @@ import chalk from "chalk";
 /** @type {ThisEnvType} */
 const {
     VITE_CLOUD_CODE_NAME,
-    LOKI_USERNAME,
-    LOKI_PASSWORD,
+    VITE_LOKI_USERNAME,
+    VITE_LOKI_PASSWORD,
     VITE_APP_CODE_NAME,
     VITE_PAGE_CODE_NAME,
 } = process.env;
@@ -33,8 +33,8 @@ const baseURL = `https://${VITE_CLOUD_CODE_NAME}.saplingdata.com`;
 export const lokiSession = axios.create({
     baseURL,
     auth: {
-        username: LOKI_USERNAME,
-        password: LOKI_PASSWORD,
+        username: VITE_LOKI_USERNAME,
+        password: VITE_LOKI_PASSWORD,
     },
 });
 const apiPath = `${VITE_APP_CODE_NAME}-AppBuilder/api`;

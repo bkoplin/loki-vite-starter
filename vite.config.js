@@ -8,24 +8,21 @@
 
 /** @type {ThisEnv} */
 
-import path from 'path'
-import dotEnv from 'dotenv'
+import path from 'path';
+import dotEnv from 'dotenv';
 
-import vue from '@vitejs/plugin-vue'
-import typescript from '@rollup/plugin-typescript'
+import vue from '@vitejs/plugin-vue';
+import typescript from '@rollup/plugin-typescript';
 
-import { renderLokiIndex } from './plugins/renderLokiIndex'
-import { makeLokiData } from './plugins/makeLokiData'
-import { uploadToLoki } from './plugins/uploadToLoki'
-dotEnv.config()
+import { renderLokiIndex } from './plugins/renderLokiIndex';
+import { makeLokiData } from './plugins/makeLokiData';
+import { uploadToLoki } from './plugins/uploadToLoki';
+dotEnv.config();
 
-const { env } = process
-const projectRootDir = process.cwd()
-const srcDir = path.resolve(
-  projectRootDir,
-  'src'
-)
-const lokiAuth = `${env.LOKI_USERNAME}:${env.LOKI_PASSWORD}`
+const { env } = process;
+const projectRootDir = process.cwd();
+const srcDir = path.resolve(projectRootDir, 'src');
+const lokiAuth = `${env.VITE_LOKI_USERNAME}:${env.VITE_LOKI_PASSWORD}`;
 /**
  *
  * @type {import('rollup').RollupOptions}
@@ -36,7 +33,7 @@ const rollupOptions = {
     assetFileNames: '[name]-[hash][extname]',
     chunkFileNames: '[name]-[hash].js',
   },
-}
+};
 
 /**
  *
@@ -59,7 +56,7 @@ export default {
     rollupOptions,
   },
   plugins: [
-    typescript(),
+    // typescript(),
     vue(),
     renderLokiIndex(),
     makeLokiData(),
@@ -72,30 +69,38 @@ export default {
     cors: true,
     https: false,
     proxy: {
-      '^.*loki.web.serviceUrlPrefix.*/query/': makeProxyOpts(`https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`),
-      [`/${env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`]: makeProxyOpts(`https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`),
+      '^.*loki.web.serviceUrlPrefix.*/query/': makeProxyOpts(
+        `https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`
+      ),
+      [`/${env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`]:
+        makeProxyOpts(
+          `https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api/urn/com/loki/core/model/api/query/v/`
+        ),
       '^.+urn:com:loki:meta:model:types:webService.+': makeProxyOpts(
         `https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}/api`,
-        (/** @type {string} */ p) => p.replace(
-          '$%7Bloki.web.serviceUrlPrefix(%22urn:com:loki:meta:model:types:webService%22)%7D',
-          ''
-        )
+        (/** @type {string} */ p) =>
+          p.replace(
+            '$%7Bloki.web.serviceUrlPrefix(%22urn:com:loki:meta:model:types:webService%22)%7D',
+            ''
+          )
       ),
-      [`^${env.VITE_APP_CODE_NAME}-AppBuilder/api.+`]: makeProxyOpts(`https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}-AppBuilder/api`),
+      [`^${env.VITE_APP_CODE_NAME}-AppBuilder/api.+`]: makeProxyOpts(
+        `https://${env.VITE_CLOUD_CODE_NAME}.saplingdata.com/${env.VITE_APP_CODE_NAME_TEST}-AppBuilder/api`
+      ),
     },
   },
-}
+};
 
 /**
  * @param {string} target
  * @param {(arg: string) => string} [rewrite]
  * @returns {import("vite").ProxyOptions}
  */
-function makeProxyOpts(target, rewrite = v => v) {
+function makeProxyOpts(target, rewrite = (v) => v) {
   return {
     auth: lokiAuth,
     changeOrigin: true,
     rewrite,
     target,
-  }
+  };
 }

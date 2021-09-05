@@ -21,7 +21,7 @@ const {
     VITE_APP_CODE_NAME,
     VITE_PAGE_CODE_NAME,
     VITE_PAGE_NAME,
-    LOKI_USER_URN,
+    VITE_LOKI_USER_URN,
     VITE_PG_DATASPACE,
 } = process.env;
 const warningColor = chalk.yellowBright;
@@ -68,7 +68,7 @@ export const queryDataObject = {
     name: `"${VITE_PAGE_NAME}" Queries`,
     summary: `Queries necessary to run page ${VITE_PAGE_NAME} at\n\nurn:com:${VITE_CLOUD_CODE_NAME}:${VITE_APP_CODE_NAME}:app:pages:${VITE_PAGE_CODE_NAME}`,
     inactive: false,
-    lastEditByUrn: LOKI_USER_URN,
+    lastEditByUrn: VITE_LOKI_USER_URN,
     lastEditDate: new Date().toISOString(),
     childQueries: childQueryObjects,
     queryString: "",
@@ -127,7 +127,7 @@ export function makePageObject () {
         ],
         combinedItemUrns: [],
         inactive: false,
-        lastEditByUrn: LOKI_USER_URN,
+        lastEditByUrn: VITE_LOKI_USER_URN,
         lastEditDate: new Date().toISOString(),
         pages: [{urn: `${pageUrn}!index.html`}],
     };
